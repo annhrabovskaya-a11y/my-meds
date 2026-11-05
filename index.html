@@ -177,6 +177,7 @@ select.inp{appearance:none;-webkit-appearance:none;background-image:linear-gradi
 
 <script>
 /* ---------- helpers ---------- */
+const APP_VERSION="5 · 5 листопада";
 const COLORS=["#A8231C","#2B2320","#3F6B3A","#C8902E","#2F4F7F","#7A1F2B","#B5562E","#6F7A2E"];
 function flower(sz){return `<svg width="${sz}" height="${sz}" viewBox="0 0 64 64" aria-hidden="true">
 <path d="M32 62C32 50 31 42 32 34" stroke="#3F6B3A" stroke-width="2.4" fill="none" stroke-linecap="round"/>
@@ -508,7 +509,7 @@ function renderMeds(){
     <div class="row between"><b>${lb?`Остання: ${fmtDay(lb).toLowerCase()}, ${fmtTime(lb)}`:"Копій ще не було"}</b>${stale?'<span class="tag warn">Час зберегти</span>':''}</div>
     <p class="sub" style="margin:8px 0 14px">Дані зберігаються лише на цьому телефоні. Час від часу зберігайте копію (у «Файли», iCloud, на пошту), щоб не втратити історію.</p>
     <div class="actions"><button class="btn" onclick="saveBackup()">Зберегти копію</button><button class="btn ghost" onclick="openRestore()">Відновити</button></div></div>`;
-  h+=`<div class="foot">${flower(56)}</div><div class="notice" style="margin-top:10px">Додаток лише записує, що і коли ви прийняли. Про сумісність ліків і дозування питайте лікаря або фармацевта.</div>`;
+  h+=`<div class="foot">${flower(56)}</div><div class="notice" style="margin-top:10px">Версія ${APP_VERSION}<br><br>Додаток лише записує, що і коли ви прийняли. Про сумісність ліків і дозування питайте лікаря або фармацевта.</div>`;
   return h;
 }
 const plural=(n,a,b,c)=>{const m10=n%10,m100=n%100;return m10===1&&m100!==11?a:(m10>=2&&m10<=4&&(m100<12||m100>14)?b:c)};
@@ -784,7 +785,7 @@ document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{tab=b.dataset.
 setInterval(()=>{ if(!$("#veil")) render() },30000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!$("#veil"))render()});
 $("#flw").innerHTML=flower(44); render(); initStorage();
-if("serviceWorker" in navigator) addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+if("serviceWorker" in navigator) addEventListener("load",()=>navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>r.update()).catch(()=>{}));
 </script>
 </body>
 </html>

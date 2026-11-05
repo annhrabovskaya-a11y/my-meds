@@ -1,5 +1,5 @@
 // Мої ліки — офлайн-режим. Змініть номер версії, щоб телефон підхопив оновлення.
-const CACHE = "moi-liky-v4";
+const CACHE = "moi-liky-v5";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest",
   "./icons/icon-192.png", "./icons/icon-512.png", "./icons/apple-touch-icon.png"];
 
@@ -28,7 +28,7 @@ self.addEventListener("fetch", e => {
 
   // Сам додаток: спершу мережа (щоб отримувати оновлення), без інтернету — кеш
   if (url.origin === location.origin) {
-    e.respondWith(fetch(req).then(res => {
+    e.respondWith(fetch(req, { cache: "no-cache" }).then(res => {
       const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); return res;
     }).catch(() => caches.match(req).then(hit => hit || caches.match("./index.html"))));
   }
