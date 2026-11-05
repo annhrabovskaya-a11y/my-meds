@@ -259,8 +259,26 @@ const hasPlan=m=>!!(m&&m.plan&&m.plan.mode&&m.plan.mode!=="none"&&(m.plan.mode==
 function apartHours(a,b){let h=0;(a.apart||[]).forEach(r=>{if(r.medId===b.id)h=Math.max(h,+r.hours||0)});(b.apart||[]).forEach(r=>{if(r.medId===a.id)h=Math.max(h,+r.hours||0)});return h}
 function parseTimes(str){return String(str||"").split(/[\s,;]+/).filter(x=>/^\d{1,2}[:.]\d{2}$/.test(x)).map(x=>hm(x.replace(".",":")))}
 
+const FLEXC={};
+function flexTimes(m){
+  const n=+m.times,iv=Math.round((interval(m)||24/n)*60),fl=Math.round((+m.plan.flex||0)*4)*15;
+  const key=[n,iv,fl,JSON.stringify(cfgS())].join("|");if(FLEXC[key])return FLEXC[key];
+  const cw=dayCfg("wd"),ce=dayCfg("we"),gaps=[];for(let g=iv-fl;g<=iv+fl;g+=15)gaps.push(g);
+  const lo=iv-fl,hi=iv+fl;let best=null;
+  const cmp=(x,y)=>{for(let i=0;i<x.length;i++)if(x[i]!==y[i])return x[i]-y[i];return 0};
+  const rec=(t1,gs,span)=>{
+    if(gs.length===n-1){const last=1440-span;if(last<lo||last>hi)return;
+      const ts=[t1];gs.forEach(g=>ts.push(ts[ts.length-1]+g));
+      let out=0;ts.forEach(t=>{const a=outInfo(t%1440,cw),b=outInfo(t%1440,ce);out+=(a?a.min:0)*5+(b?b.min:0)*2});
+      const all=gs.concat([last]);const sc=[out,all.reduce((q,g)=>q+(g-iv)*(g-iv),0),Math.abs(ts[0]%1440-hm(cfgS().wdWake))];
+      if(!best||cmp(sc,best.sc)<0)best={sc,ts:ts.map(t=>t%1440)};return}
+    for(const g of gaps)rec(t1,gs.concat([g]),span+g)};
+  for(let t1=0;t1<1440;t1+=15)rec(t1,[],0);
+  return FLEXC[key]=best?best.ts:null;
+}
 function planMed(m,type,ctx,meds){
   const n=+m.times||0, c=dayCfg(type), p=m.plan||{};
+  if(p.mode==="interval"&&+p.flex>0&&n>=2&&n<=4){const ft=flexTimes(m);if(ft)return ft}
   if(p.mode==="interval"){const iv=interval(m)*60||1440/n;const a=hm(p.anchor||"08:00");return Array.from({length:n},(_,k)=>Math.round(a+k*iv)%1440)}
   if(p.mode==="manual") return parseTimes(p.times);
   if(p.mode!=="awake"||!n) return [];
@@ -308,7 +326,9 @@ function previewHTML(tm){
   const rows=["wd","we"].map(type=>{const its=computePlan(type,tm).items.filter(it=>it.m.id===tm.id);
     const iss=its.map(issueText).filter(Boolean);
     return `<div class="pv"><span class="pvl">${type==="wd"?"Будні":"Вихідні"}</span><div>${its.map(it=>`<span class="pt ${it.out||it.conf.length?"bad":""}">${fm(it.t)}</span>`).join("")}${iss.map(x=>`<div class="pvw">⚠ ${x}</div>`).join("")}</div></div>`}).join("");
-  return `<div class="preview">${rows}</div>`;
+  let gl="";const P0=computePlan("wd",tm),c0=P0.c,ts0=(P0.ctx[tm.id]||[]).slice().sort((a,b)=>dkey(a,c0)-dkey(b,c0));
+  if(ts0.length>1)gl=`<div class="pvw" style="color:var(--muted)">Проміжки: ${ts0.map((t,i)=>fmtDur(((((i+1<ts0.length?ts0[i+1]:ts0[0])-t)%1440+1440)%1440||1440)*60000)).join(" · ")}</div>`;
+  return `<div class="preview">${rows}${gl}</div>`;
 }
 function suggestAnchors(tm){
   const n=+tm.times;if(!n)return [];const iv=(+tm.interval>0?+tm.interval:24/n)*60;
@@ -547,7 +567,9 @@ function openMedForm(id){
       <option value="awake">Підібрати під мій день</option>
       <option value="manual">Свій час</option></select></label>
     <div data-mode="interval">
-      <label class="f"><span>Перший прийом о</span><div class="row"><input class="inp" type="time" name="anchor" value="${esc(p.anchor||"08:00")}"><button type="button" class="btn small ghost" id="sug">Підібрати</button></div></label>
+      <label class="f"><span>Допустиме відхилення, ± год</span><input class="inp" name="flex" type="number" min="0" max="3" step="0.5" inputmode="decimal" value="${esc(p.flex||"")}" placeholder="0 — суворо рівні інтервали"></label>
+      <p class="hint" style="margin:-8px 2px 14px">Напр. 1 — прийоми можуть зсуватися до ±1 год, щоб усі вклалися у ваш день. Тоді години підбираються автоматично.</p>
+      <label class="f" id="anchorRow"><span>Перший прийом о</span><div class="row"><input class="inp" type="time" name="anchor" value="${esc(p.anchor||"08:00")}"><button type="button" class="btn small ghost" id="sug">Підібрати</button></div></label>
       <div id="sugbox"></div></div>
     <div data-mode="manual"><label class="f"><span>Години прийому</span><input class="inp" name="mtimes" value="${esc(p.times||"")}" placeholder="08:00, 14:00, 20:00"></label></div>
     <div data-mode="awake"><p class="hint" style="margin:-6px 2px 12px">Прийоми розподіляться між пробудженням і сном з урахуванням правил «окремо від».</p></div>
@@ -575,10 +597,11 @@ function openMedForm(id){
     return {...(id?m:{id:"__new",created:Date.now()}),
       name:(f.get("name")||"").trim(), dose:(f.get("dose")||"").trim(), times:Math.max(0,parseInt(f.get("times")||0)||0),
       interval:num(f.get("interval"),""), stock:num(f.get("stock"),""), perDose:+f.get("perDose")||1, color, notes:(f.get("notes")||"").trim(),
-      plan:{mode:f.get("mode")||"none",anchor:f.get("anchor")||"08:00",times:f.get("mtimes")||"",courseDays:num(f.get("courseDays"),""),start:f.get("start")||""},
+      plan:{mode:f.get("mode")||"none",flex:num(f.get("flex"),""),anchor:f.get("anchor")||"08:00",times:f.get("mtimes")||"",courseDays:num(f.get("courseDays"),""),start:f.get("start")||""},
       apart:rules.filter(r=>r.medId&&+r.hours>0).map(r=>({medId:r.medId,hours:+r.hours}))}};
   const upd=()=>{const mode=form.elements.mode.value;
     v.querySelectorAll("[data-mode]").forEach(d=>d.style.display=d.dataset.mode===mode?"":"none");
+    const fx=+form.elements.flex.value>0;v.querySelector("#anchorRow").style.display=fx?"none":"";v.querySelector("#sugbox").style.display=fx?"none":"";
     const tm=collect();if(!tm.name)tm.name="Ці ліки";v.querySelector("#prev").innerHTML=previewHTML(tm)};
   const drawRules=()=>{const box=v.querySelector("#apart");
     box.innerHTML=rules.map((r,i)=>`<div class="aprow"><select class="inp" data-i="${i}" data-k="medId">${others.map(o=>`<option value="${o.id}" ${o.id===r.medId?"selected":""}>${esc(o.name)}</option>`).join("")}</select><span class="sub">мін.</span><input class="inp" style="width:72px" type="number" min="0.5" step="0.5" inputmode="decimal" data-i="${i}" data-k="hours" value="${esc(r.hours)}"><span class="sub">год</span><button type="button" class="x" data-del="${i}" aria-label="Прибрати">×</button></div>`).join("");
