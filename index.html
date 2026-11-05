@@ -119,6 +119,28 @@ label.f>span{display:block;font-size:14px;font-weight:700;color:var(--muted);mar
 .toast button{color:#E9B35A;font-weight:800}
 .notice{font-size:14px;color:var(--muted);background:var(--card);border:1px dashed #d6c4a8;border-radius:14px;padding:12px;margin-top:22px;line-height:1.45}
 .foot{display:flex;justify-content:center;margin-top:30px;opacity:.9}
+.sec{font-family:Alegreya,Georgia,serif;font-size:18px;color:var(--accent);margin:22px 2px 10px;display:flex;align-items:center;gap:8px}
+.sec::before{content:"";width:7px;height:7px;background:var(--accent);transform:rotate(45deg)}
+select.inp{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 20px) 55%,calc(100% - 14px) 55%;background-size:6px 6px;background-repeat:no-repeat;padding-right:36px}
+.preview{background:var(--card);border:1px dashed #d6c4a8;border-radius:12px;padding:10px 12px;margin:0 0 6px;display:grid;gap:8px}
+.pv{display:grid;grid-template-columns:70px 1fr;gap:8px;align-items:start}
+.pvl{font-weight:800;font-size:14px;color:var(--muted);padding-top:3px}
+.pt{display:inline-block;font-weight:800;font-variant-numeric:tabular-nums;background:var(--accent-soft);color:var(--accent);padding:3px 9px;border-radius:99px;margin:0 5px 5px 0}
+.pt.bad{background:var(--due-soft);color:#7c4f08}
+.pvw{font-size:13px;color:#7c4f08;margin-top:2px}
+.opt{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.opt b{display:block;font-size:17px;font-variant-numeric:tabular-nums}
+.opt span{display:block;font-size:13px;color:var(--muted);margin-top:3px;line-height:1.4}
+.opt.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.aprow{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.aprow select{flex:1;min-width:0}
+.aprow .x{color:var(--muted);font-size:22px;padding:4px 8px}
+.mark{padding:9px 14px;font-size:14px;color:var(--muted);background:#F7EFE2;border-bottom:1px dashed var(--line)}
+.mark:first-child{border-radius:var(--r) var(--r) 0 0}
+.mark:last-child{border-radius:0 0 var(--r) var(--r);border-bottom:0}
+.daychk{display:inline-flex;align-items:center;cursor:pointer}
+.daychk input{display:none}
+.daychk:has(input:checked){background:var(--ink);color:#FFF8EE;border-color:var(--ink)}
 @keyframes up{from{transform:translateY(30px);opacity:0}}
 @keyframes fade{from{opacity:0}}
 </style>
@@ -134,6 +156,7 @@ label.f>span{display:block;font-size:14px;font-weight:700;color:var(--muted);mar
 </div>
 <nav><div class="in">
   <button data-tab="today" class="on"><span class="i">💊</span>Сьогодні</button>
+  <button data-tab="plan"><span class="i">🗓️</span>План</button>
   <button data-tab="history"><span class="i">🕘</span>Історія</button>
   <button data-tab="meds"><span class="i">⚙️</span>Мої ліки</button>
 </div></nav>
@@ -221,14 +244,96 @@ function medStatus(m){
   return {last,today,next,iv,daysLeft,now};
 }
 
+/* ---------- planning ---------- */
+const DEF={wdWake:"07:00",wdSleep:"22:30",weWake:"09:00",weSleep:"23:00",weekend:[6,0]};
+const cfgS=()=>({...DEF,...(S.settings||{})});
+const hm=x=>{const q=String(x||"").split(":");return (+q[0]||0)*60+(+q[1]||0)};
+const fm=t=>{t=((Math.round(t)%1440)+1440)%1440;return String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0")};
+const typeOf=d=>(cfgS().weekend||[]).map(Number).includes(d.getDay())?"we":"wd";
+function dayCfg(type){const st=cfgS();const w=hm(type==="we"?st.weWake:st.wdWake);let sl=hm(type==="we"?st.weSleep:st.wdSleep);if(sl<=w)sl+=1440;return {wake:w,sleep:sl,len:sl-w}}
+const relW=(t,c)=>(((t-c.wake)%1440)+1440)%1440;
+function outInfo(t,c){const r=relW(t,c);if(r<=c.len)return null;const after=r-c.len,before=1440-r;return after<=before?{min:after,side:"after"}:{min:before,side:"before"}}
+const dkey=(t,c)=>(((t-c.wake+180)%1440)+1440)%1440;
+const cdist=(a,b)=>{const d=Math.abs(a-b)%1440;return Math.min(d,1440-d)};
+const hasPlan=m=>!!(m&&m.plan&&m.plan.mode&&m.plan.mode!=="none"&&(m.plan.mode==="manual"?parseTimes(m.plan.times).length:+m.times>0));
+function apartHours(a,b){let h=0;(a.apart||[]).forEach(r=>{if(r.medId===b.id)h=Math.max(h,+r.hours||0)});(b.apart||[]).forEach(r=>{if(r.medId===a.id)h=Math.max(h,+r.hours||0)});return h}
+function parseTimes(str){return String(str||"").split(/[\s,;]+/).filter(x=>/^\d{1,2}[:.]\d{2}$/.test(x)).map(x=>hm(x.replace(".",":")))}
+
+function planMed(m,type,ctx,meds){
+  const n=+m.times||0, c=dayCfg(type), p=m.plan||{};
+  if(p.mode==="interval"){const iv=interval(m)*60||1440/n;const a=hm(p.anchor||"08:00");return Array.from({length:n},(_,k)=>Math.round(a+k*iv)%1440)}
+  if(p.mode==="manual") return parseTimes(p.times);
+  if(p.mode!=="awake"||!n) return [];
+  const conf=[];meds.forEach(o=>{if(o.id!==m.id&&ctx[o.id]){const h=apartHours(m,o);if(h)ctx[o.id].forEach(t=>conf.push({t,h:h*60}))}});
+  const pad=c.len>180?30:0, st=c.wake+pad, en=c.sleep-pad;
+  const even=()=>(n===1?[st]:Array.from({length:n},(_,i)=>st+i*(en-st)/(n-1))).map(t=>Math.round(t/5)*5%1440);
+  if(!conf.length||n>4) return even();
+  const step=n>=3?30:15, grid=[];for(let t=st;t<=en;t+=step)grid.push(t);
+  const viol=t=>conf.reduce((a,q)=>a+Math.max(0,q.h-cdist(t,q.t)),0);
+  const minC=t=>conf.reduce((a,q)=>Math.min(a,cdist(t,q.t)),1e9);
+  const score=set=>{let v=0,mg=1e9,mc=1e9;set.forEach((t,i)=>{v+=viol(t);mc=Math.min(mc,minC(t));if(i)mg=Math.min(mg,t-set[i-1])});if(n===1)mg=0;return [v,-mg,-mc]};
+  const cmp=(x,y)=>{for(let i=0;i<x.length;i++)if(x[i]!==y[i])return x[i]-y[i];return 0};
+  let best=null;const rec=(i0,set)=>{if(set.length===n){const sc=score(set);if(!best||cmp(sc,best.sc)<0)best={sc,set:set.slice()};return}
+    for(let i=i0;i<grid.length;i++){set.push(grid[i]);rec(i+1,set);set.pop()}};
+  rec(0,[]);
+  return best?best.set.map(t=>t%1440):even();
+}
+function computePlan(type,override){
+  let meds=medsList();if(override)meds=meds.filter(x=>x.id!==override.id).concat([override]);
+  meds=meds.filter(hasPlan);
+  const order=[...meds.filter(m=>m.plan.mode!=="awake"),...meds.filter(m=>m.plan.mode==="awake")];
+  const ctx={};order.forEach(m=>ctx[m.id]=planMed(m,type,ctx,meds));
+  const c=dayCfg(type),items=[];
+  order.forEach(m=>ctx[m.id].forEach(t=>items.push({m,t,rel:dkey(t,c),out:outInfo(t,c)})));
+  items.sort((a,b)=>a.rel-b.rel);
+  items.forEach(it=>{it.conf=[];items.forEach(o=>{if(o.m.id!==it.m.id){const h=apartHours(it.m,o.m);if(h&&cdist(it.t,o.t)<h*60)it.conf.push({m:o.m,d:cdist(it.t,o.t),h})}})});
+  return {items,ctx,c};
+}
+let PC={};
+const planCache=t=>PC[t]||(PC[t]=computePlan(t));
+function issueText(it){const a=[];
+  if(it.out)a.push(`${fm(it.t)} — ${it.out.side==="before"?"раніше пробудження":"пізніше сну"} на ${fmtDur(it.out.min*60000)}`);
+  it.conf.forEach(q=>a.push(`${fm(it.t)} — лише ${fmtDur(q.d*60000)} від «${esc(q.m.name)}» (треба ${String(q.h).replace(".",",")} год)`));
+  return a.join("<br>⚠ ")}
+function slotsAround(m){const res=[];for(let d=-1;d<=1;d++){const day=startOfDay()+d*86400000;const type=typeOf(new Date(day+43200000));(planCache(type).ctx[m.id]||[]).forEach(t=>res.push(day+t*60000))}return res.sort((a,b)=>a-b)}
+function tolOf(m){const ts=(planCache("wd").ctx[m.id]||[]).slice().sort((a,b)=>a-b);let g=360;if(ts.length>1)ts.forEach((t,i)=>{const nx=i+1<ts.length?ts[i+1]:ts[0]+1440;g=Math.min(g,nx-t)});return Math.min(180,g/2)*60000}
+function nextSlot(m){const now=Date.now(),tol=tolOf(m),ds=dosesOf(m.id);
+  for(const ts of slotsAround(m)){if(ts<now-tol)continue;if(ds.some(d=>Math.abs(d.at-ts)<=tol))continue;return {ts,due:ts<=now}}return null}
+function courseInfo(m){const p=m.plan||{};if(!(+p.courseDays>0&&p.start))return null;const st=new Date(p.start+"T00:00").getTime();const day=Math.floor((startOfDay()-st)/86400000+0.5)+1;
+  return {day,total:+p.courseDays,done:day>+p.courseDays,notStarted:day<1}}
+function previewHTML(tm){
+  const md=tm.plan&&tm.plan.mode;if(!md||md==="none")return "";
+  if(md!=="manual"&&!(+tm.times>0))return `<p class="hint" style="margin:0 2px 10px">Вкажіть угорі, скільки разів на день.</p>`;
+  if(md==="manual"&&!parseTimes(tm.plan.times).length)return `<p class="hint" style="margin:0 2px 10px">Впишіть години через кому, напр. 08:00, 20:00.</p>`;
+  const rows=["wd","we"].map(type=>{const its=computePlan(type,tm).items.filter(it=>it.m.id===tm.id);
+    const iss=its.map(issueText).filter(Boolean);
+    return `<div class="pv"><span class="pvl">${type==="wd"?"Будні":"Вихідні"}</span><div>${its.map(it=>`<span class="pt ${it.out||it.conf.length?"bad":""}">${fm(it.t)}</span>`).join("")}${iss.map(x=>`<div class="pvw">⚠ ${x}</div>`).join("")}</div></div>`}).join("");
+  return `<div class="preview">${rows}</div>`;
+}
+function suggestAnchors(tm){
+  const n=+tm.times;if(!n)return [];const iv=(+tm.interval>0?+tm.interval:24/n)*60;
+  const cw=dayCfg("wd"),ce=dayCfg("we"),all=[],seen=new Set();
+  for(let a=0;a<1440;a+=15){const ts=Array.from({length:n},(_,k)=>Math.round(a+k*iv)%1440).sort((x,y)=>dkey(x,cw)-dkey(y,cw));
+    const key=ts.join();if(seen.has(key))continue;seen.add(key);
+    const pen=c=>ts.reduce((q,t)=>{const o=outInfo(t,c);return q+(o?o.min:0)},0);
+    const pw=pen(cw),pe=pen(ce);all.push({ts,score:pw*5+pe*2})}
+  all.sort((x,y)=>x.score-y.score||dkey(x.ts[0],cw)-dkey(y.ts[0],cw));
+  const pick=[];for(const o of all){if(pick.every(q=>Math.min(...q.ts.map(t=>Math.min(...o.ts.map(u=>cdist(t,u)))))>=30))pick.push(o);if(pick.length===3)break}
+  pick.forEach(o=>o.desc=["wd","we"].map(type=>{const c=dayCfg(type);
+    const iss=o.ts.map(t=>({t,o:outInfo(t,c)})).filter(x=>x.o).map(x=>`${fm(x.t)} — ${x.o.side==="before"?"раніше підйому":"пізніше сну"} на ${fmtDur(x.o.min*60000)}`);
+    return `<b style="display:inline;font-size:13px">${type==="wd"?"Будні":"Вихідні"}:</b> ${iss.length?iss.join(", "):"усе в межах дня ✓"}`}).join("<br>"));
+  return pick;
+}
+
 /* ---------- render ---------- */
 let tab="today", histFilter="all", pendingDelete=null;
 function render(){
+  PC={};
   $("#today").textContent=new Date().toLocaleDateString("uk-UA",{weekday:"short",day:"numeric",month:"long"});
-  $("#title").textContent={today:"Сьогодні",history:"Історія",meds:"Мої ліки"}[tab];
+  $("#title").textContent={today:"Сьогодні",plan:"План",history:"Історія",meds:"Мої ліки"}[tab];
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
   $("#main").innerHTML= backend===null? `<div class="empty">Завантаження…</div>` :
-    tab==="today"?renderToday(): tab==="history"?renderHistory(): renderMeds();
+    tab==="today"?renderToday(): tab==="plan"?renderPlan(): tab==="history"?renderHistory(): renderMeds();
 }
 
 function renderToday(){
@@ -255,7 +360,13 @@ function renderToday(){
     let dots="";
     if(times>0){ for(let i=0;i<Math.max(times,st.today);i++) dots+=`<span class="dot ${i<st.today?"on":""}"></span>` }
     let nextLine="";
-    if(!st.last) nextLine=`<span class="sub">Ще не приймали</span>`;
+    if(hasPlan(m)){
+      const ns=nextSlot(m);
+      if(ns){const tmr=ns.ts>=startOfDay()+86400000;
+        nextLine=ns.due?`<span class="tag due">Час приймати · за планом ${fmtTime(ns.ts)}</span>`
+          :`За планом ${tmr?"завтра ":""}о <b>${fmtTime(ns.ts)}</b> <span class="sub">(через ${fmtDur(ns.ts-st.now)})</span>`}
+    }
+    else if(!st.last) nextLine=`<span class="sub">Ще не приймали</span>`;
     else if(st.next){
       const diff=st.next-st.now;
       if(times>0 && st.today>=times && diff>0 && new Date(st.next).getDate()!==new Date().getDate())
@@ -263,10 +374,19 @@ function renderToday(){
       else if(diff<=0) nextLine=`<span class="tag due">Час приймати · з ${fmtTime(st.next)}</span>`;
       else nextLine=`Наступна о <b>${fmtTime(st.next)}</b> <span class="sub">(через ${fmtDur(diff)})</span>`;
     }
+    let extra="";
+    medsList().forEach(o=>{if(o.id===m.id)return;const h=apartHours(m,o);if(!h)return;const lo=dosesOf(o.id)[0];
+      if(lo&&st.now>=lo.at&&st.now-lo.at<h*HOUR)extra+=`<div><span class="tag warn">«${esc(o.name)}» о ${fmtTime(lo.at)} — краще після ${fmtTime(lo.at+h*HOUR)}</span></div>`});
+    const ci=courseInfo(m);
+    if(ci)extra+=ci.done?`<div><span class="tag ok">✓ Курс завершено (${ci.total} дн)</span></div>`
+      :ci.notStarted?`<div class="sub">Курс почнеться ${new Date(m.plan.start+"T12:00").toLocaleDateString("uk-UA",{day:"numeric",month:"long"})}</div>`
+      :`<div>Курс: <b>день ${ci.day} з ${ci.total}</b></div>`;
+    const need=ci&&!ci.done&&+m.times?Math.max(0,((ci.total-Math.max(ci.day,1)+1)*m.times-(ci.notStarted?0:st.today))*(+m.perDose||1)):null;
     let stock="";
     if(m.stock!==""&&m.stock!=null){
       const low=(+m.stock<(+m.perDose||1))||(st.daysLeft!=null&&st.daysLeft<=5);
       stock=`<div>${low?'<span class="tag warn">':''}Залишилось ${pieces(m.stock)}${st.daysLeft!=null?` · ≈ ${Math.floor(st.daysLeft)} дн`:''}${low?'</span>':''}</div>`;
+      if(need!=null&&+m.stock<need)stock+=`<div><span class="tag warn">До кінця курсу треба ще ${pieces(need)} — не вистачить</span></div>`;
     }
     h+=`<div class="card med" style="--c:${m.color}">
       <div class="row between"><div><div class="name">${esc(m.name)}</div>
@@ -276,7 +396,7 @@ function renderToday(){
       <div class="lines">
         ${st.last?`<div>Остання: <b>${fmtTime(st.last.at)}</b>${st.last.at<startOfDay()?` <span class="sub">(${fmtDay(st.last.at).toLowerCase()})</span>`:""} <span class="sub">· ${fmtDur(st.now-st.last.at)} тому</span></div>`:""}
         <div>${nextLine}</div>
-        ${stock}
+        ${extra}${stock}
       </div>
       <div class="actions">
         <button class="btn" id="take_${m.id}" onclick="takeMed('${m.id}')">✓ Випила</button>
@@ -333,6 +453,7 @@ function renderMeds(){
       h+=`<div class="card med" style="--c:${m.color}"><div class="row between"><div>
         <div class="name">${esc(m.name)}</div>
         <div class="sub">${esc([m.dose, m.times?`${m.times} р/день · кожні ${String(interval(m)).replace(".",",")} год`:"за потреби", m.stock!==""&&m.stock!=null?`запас ${pieces(m.stock)}`:""].filter(Boolean).join(" · "))}</div>
+        ${hasPlan(m)?`<div class="sub" style="margin-top:4px">🗓 ${(()=>{const P=planCache("wd");return (P.ctx[m.id]||[]).slice().sort((a,b)=>dkey(a,P.c)-dkey(b,P.c)).map(fm).join(" · ")})()}</div>`:""}
         ${m.notes?`<div class="sub" style="margin-top:4px">📝 ${esc(m.notes)}</div>`:""}</div>
         <div class="row" style="gap:4px"><button class="btn small ghost" onclick="openRefill('${m.id}')">＋📦</button>
         <button class="btn small ghost" onclick="openMedForm('${m.id}')">Змінити</button></div></div></div>`;
@@ -401,9 +522,12 @@ function closeSheet(){const v=$("#veil"); if(v) v.remove()}
 
 function openMedForm(id){
   const m=id?S.meds[id]:{name:"",dose:"",times:2,interval:"",stock:"",perDose:1,color:COLORS[medsList().length%COLORS.length],notes:""};
+  const p=m.plan||{mode:"none"};
+  const others=medsList().filter(x=>x.id!==id);
+  let rules=(m.apart||[]).filter(r=>S.meds[r.medId]).map(r=>({...r}));
   const v=openSheet(`<h3>${id?"Змінити ліки":"Нові ліки"}</h3>
   <form id="mf">
-    <label class="f"><span>Назва</span><input class="inp" name="name" required value="${esc(m.name)}" placeholder="напр. Магній B6"></label>
+    <label class="f"><span>Назва</span><input class="inp" name="name" required value="${esc(m.name)}" placeholder="напр. Амоксицилін"></label>
     <label class="f"><span>Доза (необов'язково)</span><input class="inp" name="dose" value="${esc(m.dose)}" placeholder="напр. 500 мг"></label>
     <div class="grid2">
       <label class="f"><span>Разів на день</span><input class="inp" name="times" type="number" min="0" max="24" inputmode="numeric" value="${esc(m.times)}"></label>
@@ -414,23 +538,105 @@ function openMedForm(id){
       <label class="f"><span>Скільки пігулок є</span><input class="inp" name="stock" type="number" min="0" step="0.5" inputmode="decimal" value="${esc(m.stock)}" placeholder="напр. 30"></label>
       <label class="f"><span>Пігулок за раз</span><input class="inp" name="perDose" type="number" min="0.25" step="0.25" inputmode="decimal" value="${esc(m.perDose)}"></label>
     </div>
+
+    <h4 class="sec">Розклад</h4>
+    ${S.settings?"":`<p class="hint" style="margin:-4px 2px 10px">Порада: вкажіть свій розпорядок у вкладці «План» → «⏰ Розпорядок», щоб час підбирався точніше.</p>`}
+    <label class="f"><span>Як планувати прийоми</span><select class="inp" name="mode">
+      <option value="none">Без розкладу</option>
+      <option value="interval">Рівно кожні N годин</option>
+      <option value="awake">Підібрати під мій день</option>
+      <option value="manual">Свій час</option></select></label>
+    <div data-mode="interval">
+      <label class="f"><span>Перший прийом о</span><div class="row"><input class="inp" type="time" name="anchor" value="${esc(p.anchor||"08:00")}"><button type="button" class="btn small ghost" id="sug">Підібрати</button></div></label>
+      <div id="sugbox"></div></div>
+    <div data-mode="manual"><label class="f"><span>Години прийому</span><input class="inp" name="mtimes" value="${esc(p.times||"")}" placeholder="08:00, 14:00, 20:00"></label></div>
+    <div data-mode="awake"><p class="hint" style="margin:-6px 2px 12px">Прийоми розподіляться між пробудженням і сном з урахуванням правил «окремо від».</p></div>
+    <div id="prev"></div>
+
+    <h4 class="sec">Окремо від інших ліків</h4>
+    <div id="apart"></div>
+    ${others.length?`<button type="button" class="link" id="addAp">+ Додати правило</button>`:`<p class="hint" style="margin:-4px 2px 0">Коли додасте інші ліки, тут можна буде вказати, наприклад, «щонайменше 2 год від антибіотика».</p>`}
+
+    <h4 class="sec">Курс</h4>
+    <div class="grid2">
+      <label class="f"><span>Скільки днів</span><input class="inp" name="courseDays" type="number" min="1" inputmode="numeric" value="${esc(p.courseDays||"")}" placeholder="без обмеження"></label>
+      <label class="f"><span>Перший день</span><input class="inp" name="start" type="date" value="${esc(p.start||"")}"></label>
+    </div>
+
+    <h4 class="sec">Вигляд</h4>
     <label class="f"><span>Колір</span><div class="swatches">${COLORS.map(c=>`<button type="button" class="sw ${c===m.color?"on":""}" style="--c:${c}" data-c="${c}"></button>`).join("")}</div></label>
     <label class="f"><span>Нотатка</span><input class="inp" name="notes" value="${esc(m.notes)}" placeholder="напр. після їжі"></label>
     <div class="actions" style="margin-top:6px">${id?`<button type="button" class="btn ghost danger" id="delMed">Видалити</button>`:""}<button class="btn">Зберегти</button></div>
   </form>`);
+  const form=v.querySelector("#mf");form.elements.mode.value=p.mode||"none";
   let color=m.color;
-  v.querySelectorAll(".sw").forEach(b=>b.onclick=()=>{color=b.dataset.c;v.querySelectorAll(".sw").forEach(x=>x.classList.toggle("on",x===b))});
+  const num=(x,d)=>x===""||x==null?d:+x;
+  const collect=()=>{const f=new FormData(form);
+    return {...(id?m:{id:"__new",created:Date.now()}),
+      name:(f.get("name")||"").trim(), dose:(f.get("dose")||"").trim(), times:Math.max(0,parseInt(f.get("times")||0)||0),
+      interval:num(f.get("interval"),""), stock:num(f.get("stock"),""), perDose:+f.get("perDose")||1, color, notes:(f.get("notes")||"").trim(),
+      plan:{mode:f.get("mode")||"none",anchor:f.get("anchor")||"08:00",times:f.get("mtimes")||"",courseDays:num(f.get("courseDays"),""),start:f.get("start")||""},
+      apart:rules.filter(r=>r.medId&&+r.hours>0).map(r=>({medId:r.medId,hours:+r.hours}))}};
+  const upd=()=>{const mode=form.elements.mode.value;
+    v.querySelectorAll("[data-mode]").forEach(d=>d.style.display=d.dataset.mode===mode?"":"none");
+    const tm=collect();if(!tm.name)tm.name="Ці ліки";v.querySelector("#prev").innerHTML=previewHTML(tm)};
+  const drawRules=()=>{const box=v.querySelector("#apart");
+    box.innerHTML=rules.map((r,i)=>`<div class="aprow"><select class="inp" data-i="${i}" data-k="medId">${others.map(o=>`<option value="${o.id}" ${o.id===r.medId?"selected":""}>${esc(o.name)}</option>`).join("")}</select><span class="sub">мін.</span><input class="inp" style="width:72px" type="number" min="0.5" step="0.5" inputmode="decimal" data-i="${i}" data-k="hours" value="${esc(r.hours)}"><span class="sub">год</span><button type="button" class="x" data-del="${i}" aria-label="Прибрати">×</button></div>`).join("");
+    box.querySelectorAll("[data-k]").forEach(el=>{el.oninput=el.onchange=()=>{rules[+el.dataset.i][el.dataset.k]=el.value;upd()}});
+    box.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{rules.splice(+b.dataset.del,1);drawRules();upd()})};
+  const ab=v.querySelector("#addAp");if(ab)ab.onclick=()=>{rules.push({medId:others[0].id,hours:2});drawRules();upd()};
+  form.addEventListener("input",upd);form.addEventListener("change",upd);
+  v.querySelector("#sug").onclick=()=>{const tm=collect();const opts=suggestAnchors(tm);const box=v.querySelector("#sugbox");
+    if(!opts.length){box.innerHTML=`<p class="hint">Спершу вкажіть, скільки разів на день.</p>`;return}
+    box.innerHTML=`<p class="hint" style="margin:-4px 2px 8px">Найзручніші варіанти для вашого розпорядку — оберіть один:</p>`+opts.map(o=>`<button type="button" class="opt" data-a="${fm(o.ts[0])}"><b>${o.ts.map(fm).join(" · ")}</b><span>${o.desc}</span></button>`).join("");
+    box.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{form.elements.anchor.value=b.dataset.a;box.querySelectorAll(".opt").forEach(x=>x.classList.toggle("on",x===b));upd()})};
+  v.querySelectorAll(".sw").forEach(b=>b.onclick=()=>{color=b.dataset.c;v.querySelectorAll(".sw").forEach(x=>x.classList.toggle("on",x===b));upd()});
   const db=v.querySelector("#delMed");
   if(db) db.onclick=()=>{ if(db.dataset.sure){ Object.values(S.combos).forEach(c=>{if(c.medIds.includes(id)) put("combo",{...c,medIds:c.medIds.filter(x=>x!==id)})}); del("med",id); closeSheet(); toast("Ліки видалено. Історія збережена.") } else { db.dataset.sure=1; db.textContent="Точно?" } };
-  v.querySelector("#mf").onsubmit=e=>{
-    e.preventDefault(); const f=new FormData(e.target);
-    const obj={...(id?m:{id:uid("m"),created:Date.now()}),
-      name:f.get("name").trim(), dose:f.get("dose").trim(), times:Math.max(0,parseInt(f.get("times")||0)),
-      interval:f.get("interval")===""?"":+f.get("interval"), stock:f.get("stock")===""?"":+f.get("stock"),
-      perDose:+f.get("perDose")||1, color, notes:f.get("notes").trim()};
-    if(!obj.name) return;
-    put("med",obj); closeSheet(); toast(id?"Збережено":"Ліки додано");
-  };
+  form.onsubmit=e=>{e.preventDefault();const obj=collect();if(!obj.name)return;if(!id)obj.id=uid("m");
+    put("med",obj);closeSheet();toast(id?"Збережено":"Ліки додано")};
+  drawRules();upd();
+}
+
+function openSettings(){
+  const st=cfgS();const days=[["Пн",1],["Вт",2],["Ср",3],["Чт",4],["Пт",5],["Сб",6],["Нд",0]];
+  const v=openSheet(`<h3>Мій розпорядок</h3><p class="sub" style="margin-top:-8px">За ним додаток підбирає години прийому, коли ви не спите.</p>
+  <form id="sf">
+    <h4 class="sec">Будні</h4>
+    <div class="grid2"><label class="f"><span>Прокидаюсь</span><input class="inp" type="time" name="wdWake" value="${st.wdWake}"></label><label class="f"><span>Лягаю спати</span><input class="inp" type="time" name="wdSleep" value="${st.wdSleep}"></label></div>
+    <h4 class="sec">Вихідні</h4>
+    <div class="grid2"><label class="f"><span>Прокидаюсь</span><input class="inp" type="time" name="weWake" value="${st.weWake}"></label><label class="f"><span>Лягаю спати</span><input class="inp" type="time" name="weSleep" value="${st.weSleep}"></label></div>
+    <label class="f"><span>Які дні вихідні</span><div class="row" style="flex-wrap:wrap;gap:6px">${days.map(([l,d])=>`<label class="fbtn daychk"><input type="checkbox" name="we" value="${d}" ${st.weekend.map(Number).includes(d)?"checked":""}>${l}</label>`).join("")}</div></label>
+    <button class="btn" style="width:100%">Зберегти</button></form>`);
+  v.querySelector("#sf").onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);
+    S.settings={wdWake:f.get("wdWake")||DEF.wdWake,wdSleep:f.get("wdSleep")||DEF.wdSleep,weWake:f.get("weWake")||DEF.weWake,weSleep:f.get("weSleep")||DEF.weSleep,weekend:f.getAll("we").map(Number)};
+    saveLocal();closeSheet();render();toast("Розпорядок збережено")};
+}
+
+let planView="today";
+function renderPlan(){
+  const tabs=[["today","Сьогодні"],["wd","Будні"],["we","Вихідні"]];
+  let h=`<div class="filter">${tabs.map(([k,l])=>`<button class="fbtn ${planView===k?"on":""}" onclick="planView='${k}';render()">${l}</button>`).join("")}<button class="fbtn" onclick="openSettings()">⏰ Розпорядок</button></div>`;
+  if(!S.settings) h+=`<div class="card" style="margin-top:14px"><div class="name" style="font-size:19px">Спершу — ваш розпорядок</div><p class="sub">Коли ви прокидаєтесь і лягаєте спати в будні та на вихідних. Тоді додаток підбере зручні години.</p><button class="btn" style="width:100%" onclick="openSettings()">Вказати розпорядок</button></div>`;
+  const planned=medsList().filter(hasPlan);
+  if(!planned.length) return h+`<div class="empty"><div class="big">${flower(80)}</div>Ще немає ліків із розкладом.<br>Відкрийте «Мої ліки» → «Змінити» → розділ «Розклад».</div>`;
+  const isToday=planView==="today", type=isToday?typeOf(new Date()):planView, P=planCache(type), c=P.c, now=Date.now();
+  h+=`<div class="dayhead"><b>${isToday?"Сьогодні":type==="we"?"Вихідний день":"Будній день"}</b><span class="sub">${type==="we"?"вихідний":"будній"} · ${fm(c.wake)}–${fm(c.sleep)}</span></div><div class="timeline" style="padding:0">`;
+  let woke=false,slept=false;
+  const wakeM=`<div class="mark">☀️ <b>${fm(c.wake)}</b> · прокидаюсь</div>`;
+  P.items.forEach(it=>{
+    if(!woke&&it.rel>=180){woke=true;h+=wakeM}
+    if(!slept&&it.rel>180+c.len){slept=true;h+=`<div class="mark">🌙 <b>${fm(c.sleep)}</b> · сон</div>`}
+    let status="";
+    if(isToday){const ts=startOfDay()+it.t*60000,tol=tolOf(it.m);const d=dosesOf(it.m.id).find(x=>Math.abs(x.at-ts)<=tol);
+      status=d?`<span class="tag ok">✓ ${fmtTime(d.at)}</span>`:now>ts+tol?`<span class="sub">не відмічено</span>`:now>=ts-20*60000?`<button class="btn small" onclick="takeMed('${it.m.id}')">Випила</button>`:""}
+    const iss=issueText(it);
+    h+=`<div class="ev" style="--c:${it.m.color}"><span class="t">${fm(it.t)}</span><span class="d"></span><div><div style="font-weight:700">${esc(it.m.name)}</div>${it.m.dose?`<div class="gap">${esc(it.m.dose)}</div>`:""}${iss?`<div class="gap" style="color:var(--warn)">⚠ ${iss}</div>`:""}</div><div>${status}</div></div>`;
+  });
+  if(!woke) h+=wakeM;
+  if(!slept) h+=`<div class="mark">🌙 <b>${fm(c.sleep)}</b> · сон</div>`;
+  h+=`</div><p class="hint" style="margin:12px 4px">Чи потрібні суворі інтервали саме для ваших ліків, і скільки часу між ними — уточніть у лікаря або фармацевта.</p>`;
+  return h;
 }
 
 function openRefill(id){
@@ -484,7 +690,7 @@ function restoreFrom(text){
   let j; try{j=JSON.parse(text)}catch(e){return toast("Не вдалося прочитати копію")}
   const d=(j&&j.data)||j;
   if(!d||typeof d.meds!=="object") return toast("Це не схоже на копію «Мої ліки»");
-  S.meds=d.meds||{}; S.doses=d.doses||{}; S.combos=d.combos||{};
+  S.meds=d.meds||{}; S.doses=d.doses||{}; S.combos=d.combos||{}; if(d.settings) S.settings=d.settings;
   saveLocal(); closeSheet(); render(); toast("Дані відновлено");
 }
 function openRestore(){
