@@ -13,7 +13,7 @@
 <meta name="theme-color" content="#F3EBDD">
 <title>Мої ліки</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700;800&family=Alegreya+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700;800&family=Alegreya+Sans:wght@400;500;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#F3EBDD; --card:#FFFCF6; --ink:#2B2320; --muted:#7A6A5C; --line:#E6D8C3;
@@ -158,6 +158,42 @@ select.inp{appearance:none;-webkit-appearance:none;background-image:linear-gradi
 .daychk:has(input:checked){background:var(--ink);color:#FFF8EE;border-color:var(--ink)}
 @keyframes up{from{transform:translateY(30px);opacity:0}}
 @keyframes fade{from{opacity:0}}
+
+/* ---------- modern theme ---------- */
+html[data-theme=modern]{--bg:#F5F6F8;--card:#FFFFFF;--ink:#111827;--muted:#6B7280;--line:#E5E7EB;--accent:#0F766E;--accent-ink:#fff;--accent-soft:#E6F3F1;--gold:#CA8A04;--green:#16A34A;--warn:#DC2626;--warn-soft:#FEE2E2;--due:#B45309;--due-soft:#FEF3C7;--r:18px}
+[data-theme=modern] body{font-family:Inter,system-ui,-apple-system,sans-serif;background-image:none;font-size:16px}
+[data-theme=modern] .band,[data-theme=modern] .foot{display:none}
+[data-theme=modern] .wrap{padding-top:22px}
+[data-theme=modern] h1,[data-theme=modern] .name,[data-theme=modern] .sheet h3,[data-theme=modern] .stat b,[data-theme=modern] .dayhead b,[data-theme=modern] .greet,[data-theme=modern] .sec,[data-theme=modern] h2{font-family:Inter,system-ui,-apple-system,sans-serif}
+[data-theme=modern] h1{font-size:30px;font-weight:800;letter-spacing:-.03em}
+[data-theme=modern] .date{font-style:normal}
+[data-theme=modern] .name{font-size:18px;font-weight:700;letter-spacing:-.01em}
+[data-theme=modern] .sheet h3{font-size:22px;letter-spacing:-.02em}
+[data-theme=modern] h2,[data-theme=modern] .sec{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+[data-theme=modern] h2::before,[data-theme=modern] h2::after,[data-theme=modern] .sec::before{display:none}
+[data-theme=modern] .card{border:0;box-shadow:0 1px 2px #0000000d,0 6px 18px -10px #00000026}
+[data-theme=modern] .card.med{padding:16px 16px 16px 20px}
+[data-theme=modern] .card.med::before{left:0;right:auto;top:0;bottom:0;height:auto;width:5px;border-radius:0;background:var(--c)}
+[data-theme=modern] .dot{border-radius:50%;border:2px solid var(--c);width:12px;height:12px}
+[data-theme=modern] .dot::before,[data-theme=modern] .dot::after{display:none}
+[data-theme=modern] .dot.on{background:var(--c)}
+[data-theme=modern] .ev .d{transform:none;border-radius:50%}
+[data-theme=modern] .ev{border-bottom-style:solid}
+[data-theme=modern] .btn{box-shadow:none;border-radius:12px;font-weight:700;font-size:16px}
+[data-theme=modern] .btn.ghost{background:#EEF0F3}
+[data-theme=modern] nav{background:#ffffffeb;border-top:1px solid var(--line)}
+[data-theme=modern] nav::before{display:none}
+[data-theme=modern] .grab{height:5px;width:40px;border-radius:9px;background:#D1D5DB;margin:8px auto 0}
+[data-theme=modern] .mark{background:#F3F4F6}
+[data-theme=modern] .timeline,[data-theme=modern] .stat,[data-theme=modern] .opt,[data-theme=modern] .check,[data-theme=modern] .inp,[data-theme=modern] .fbtn{border-color:var(--line)}
+[data-theme=modern] .timeline,[data-theme=modern] .stat{border:0;box-shadow:0 1px 2px #0000000d}
+[data-theme=modern] .greet{color:var(--ink);font-size:18px}
+[data-theme=modern] .notice,[data-theme=modern] .preview{border-style:solid;border-color:var(--line)}
+[data-theme=modern] .tag.ok{background:#DCFCE7;color:#15803D}
+[data-theme=modern] .pt.bad{color:#92400E}
+[data-theme=modern] .pvw{color:#92400E}
+[data-theme=modern] .toast button{color:#5EEAD4}
+[data-theme=modern] .chip{background:color-mix(in srgb,var(--c) 12%,white)}
 </style>
 </head>
 <body>
@@ -170,16 +206,31 @@ select.inp{appearance:none;-webkit-appearance:none;background-image:linear-gradi
   <main id="main"></main>
 </div>
 <nav><div class="in">
-  <button data-tab="today" class="on"><span class="i">💊</span>Сьогодні</button>
-  <button data-tab="plan"><span class="i">🗓️</span>План</button>
-  <button data-tab="history"><span class="i">🕘</span>Історія</button>
-  <button data-tab="meds"><span class="i">⚙️</span>Мої ліки</button>
+  <button data-tab="today" class="on"><span class="i">💊</span><span class="lbl">Сьогодні</span></button>
+  <button data-tab="plan"><span class="i">🗓️</span><span class="lbl">План</span></button>
+  <button data-tab="history"><span class="i">🕘</span><span class="lbl">Історія</span></button>
+  <button data-tab="meds"><span class="i">⚙️</span><span class="lbl">Мої ліки</span></button>
 </div></nav>
 
 <script>
+/* ---------- language & theme ---------- */
+const APP_VERSION="7 · 6.11.2026";
+const DEFAULT_LANG=/^(uk|ru|be)/i.test(navigator.language||"")?"uk":"en";
+const lang=()=>(S.profile&&S.profile.lang)||DEFAULT_LANG;
+const theme=()=>(S.profile&&S.profile.theme)||"folk";
+const L=(u,e)=>lang()==="en"?e:u;
+const LOC=()=>lang()==="en"?"en-GB":"uk-UA";
+function applyLook(){
+  document.documentElement.dataset.theme=theme();
+  document.documentElement.lang=lang();
+  document.title=L("Мої ліки","My Meds");
+  const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=theme()==="modern"?"#F5F6F8":"#F3EBDD";
+}
+
 /* ---------- helpers ---------- */
-const APP_VERSION="6 · 5 листопада";
-const COLORS=["#A8231C","#2B2320","#3F6B3A","#C8902E","#2F4F7F","#7A1F2B","#B5562E","#6F7A2E"];
+const COLORS_FOLK=["#A8231C","#2B2320","#3F6B3A","#C8902E","#2F4F7F","#7A1F2B","#B5562E","#6F7A2E"];
+const COLORS_MODERN=["#0F766E","#2563EB","#7C3AED","#DB2777","#EA580C","#CA8A04","#16A34A","#475569"];
+const COLORS=()=>theme()==="modern"?COLORS_MODERN:COLORS_FOLK;
 function flower(sz){return `<svg width="${sz}" height="${sz}" viewBox="0 0 64 64" aria-hidden="true">
 <path d="M32 62C32 50 31 42 32 34" stroke="#3F6B3A" stroke-width="2.4" fill="none" stroke-linecap="round"/>
 <path d="M31 50C22 49 14 42 12 34C21 35 28 41 31 50Z" fill="#3F6B3A"/><path d="M33 46C41 46 49 40 52 32C43 32 36 38 33 46Z" fill="#5A8A4E"/>
@@ -187,62 +238,46 @@ function flower(sz){return `<svg width="${sz}" height="${sz}" viewBox="0 0 64 64
 <g transform="translate(32 22)">${[0,72,144,216,288].map(a=>`<path transform="rotate(${a})" d="M0 -3C-7 -8 -7 -18 0 -21C7 -18 7 -8 0 -3Z" fill="#A8231C"/><path transform="rotate(${a})" d="M0 -6C-2.5 -9 -2.5 -14 0 -16C2.5 -14 2.5 -9 0 -6Z" fill="#E0663F"/>`).join("")}
 <circle r="6" fill="#C8902E"/><circle r="2.6" fill="#2B2320"/></g>
 <circle cx="10" cy="22" r="2.6" fill="#A8231C"/><circle cx="7" cy="27" r="2" fill="#2B2320"/><circle cx="54" cy="22" r="2.6" fill="#A8231C"/><circle cx="57" cy="27" r="2" fill="#2B2320"/></svg>`}
+function pillIcon(sz){return `<svg width="${sz}" height="${sz}" viewBox="0 0 64 64" aria-hidden="true">
+<rect x="4" y="4" width="56" height="56" rx="16" fill="var(--accent)"/>
+<g transform="rotate(-40 32 32)"><rect x="14" y="23" width="36" height="18" rx="9" fill="#fff"/><rect x="32" y="23" width="18" height="18" rx="0" fill="#ffffffaa"/><rect x="41" y="23" width="9" height="18" rx="9" fill="#ffffffaa"/><path d="M32 23V41" stroke="var(--accent)" stroke-width="2"/></g></svg>`}
+const logo=sz=>theme()==="modern"?pillIcon(sz):flower(sz);
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const uid=p=>p+"_"+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 const HOUR=3600e3;
-const fmtTime=ts=>new Date(ts).toLocaleTimeString("uk-UA",{hour:"2-digit",minute:"2-digit"});
+const dec=n=>lang()==="en"?String(n):String(n).replace(".",",");
+const fmtTime=ts=>new Date(ts).toLocaleTimeString(LOC(),{hour:"2-digit",minute:"2-digit"});
 const fmtDay=ts=>{
   const d=new Date(ts), t=new Date(); const y=new Date(); y.setDate(t.getDate()-1);
-  if(d.toDateString()===t.toDateString()) return "Сьогодні";
-  if(d.toDateString()===y.toDateString()) return "Вчора";
-  return d.toLocaleDateString("uk-UA",{weekday:"long",day:"numeric",month:"long"});
+  if(d.toDateString()===t.toDateString()) return L("Сьогодні","Today");
+  if(d.toDateString()===y.toDateString()) return L("Вчора","Yesterday");
+  return d.toLocaleDateString(LOC(),{weekday:"long",day:"numeric",month:"long"});
 };
 function fmtDur(ms){
   ms=Math.abs(ms); const m=Math.round(ms/60000);
-  if(m<1) return "щойно";
+  if(m<1) return L("щойно","just now");
   const h=Math.floor(m/60), mm=m%60;
-  if(h>=48) return Math.floor(h/24)+" дн "+(h%24)+" год";
-  return [h?h+" год":"",(mm||!h)?mm+" хв":""].filter(Boolean).join(" ");
+  if(h>=48) return Math.floor(h/24)+L(" дн "," d ")+(h%24)+L(" год"," h");
+  return [h?h+L(" год"," h"):"",(mm||!h)?mm+L(" хв"," min"):""].filter(Boolean).join(" ");
 }
 const startOfDay=(ts=Date.now())=>{const d=new Date(ts);d.setHours(0,0,0,0);return d.getTime()};
 const toLocalInput=ts=>{const d=new Date(ts);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16)};
-function pieces(n){n=+n; if(Number.isInteger(n)) return n+" шт"; return n.toFixed(1).replace(".",",")+" шт"}
+function pieces(n){n=+n;const v=Number.isInteger(n)?n:dec(n.toFixed(1));return v+L(" шт"," pcs")}
+const plural=(n,a,b,c)=>{if(lang()==="en")return n===1?a:b;const m10=n%10,m100=n%100;return m10===1&&m100!==11?a:(m10>=2&&m10<=4&&(m100<12||m100>14)?b:c)};
+const pl=(n,ua,en)=>plural(n,...(lang()==="en"?en:ua));
 
 /* ---------- state & storage ---------- */
 const S={meds:{},doses:{},combos:{}};
 const KIND={med:"meds",dose:"doses",combo:"combos"};
-let backend=null, col=null; const queues={};
+let backend=null;
 const LS="mylikiv1";
-
 function loadLocal(){try{const j=JSON.parse(localStorage.getItem(LS)||"null");if(j){Object.assign(S,j)}}catch(e){}}
 function saveLocal(){try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}}
-
-function put(kind,obj){
-  S[KIND[kind]][obj.id]=obj; render();
-  if(backend==="db"){ queue(obj.id,()=>col.doc(obj.id).set({...obj,kind})) } else saveLocal();
-}
-function del(kind,id){
-  delete S[KIND[kind]][id]; render();
-  if(backend==="db"){ queue(id,()=>col.doc(id).delete()) } else saveLocal();
-}
-function queue(id,fn){
-  queues[id]=(queues[id]||Promise.resolve()).then(fn).catch(e=>{console.warn(e);toast("Не вдалося зберегти. Перевірте інтернет.")});
-}
-function applySnapshot(snap){
-  const docs=snap&&(snap.docs||snap)||[];
-  const next={meds:{},doses:{},combos:{}};
-  (Array.isArray(docs)?docs:[]).forEach(d=>{
-    const data=typeof d.data==="function"?d.data():(d.data||d);
-    const id=d.id||data.id; if(!data||!KIND[data.kind]) return;
-    next[KIND[data.kind]][id]={...data,id};
-  });
-  Object.assign(S,next); render();
-}
-function setSync(t){const e=$("#sync");if(e)e.textContent=t}
-
+function put(kind,obj){S[KIND[kind]][obj.id]=obj;render();saveLocal()}
+function del(kind,id){delete S[KIND[kind]][id];render();saveLocal()}
 async function initStorage(){
-  backend="local"; loadLocal(); render();
+  backend="local"; loadLocal(); applyLook(); render();
   if(!S.profile) setTimeout(()=>{if(!$("#veil"))openProfile(true)},400);
   try{ if(navigator.storage&&navigator.storage.persist) navigator.storage.persist() }catch(e){}
 }
@@ -261,29 +296,35 @@ function medStatus(m){
   return {last,today,next,iv,daysLeft,now};
 }
 
-/* ---------- profile ---------- */
+/* ---------- profile & settings ---------- */
 const prof=()=>S.profile||{};
 const gx=(f,m,n)=>{const g=prof().gender;return g==="m"?m:g==="n"?n:f};
-const TOOK=()=>gx("Випила","Випив","Прийнято");
-const TOOK_ALL=()=>gx("Випила все","Випив все","Прийнято все");
+const TOOK=()=>L(gx("Випила","Випив","Прийнято"),"Taken");
+const TOOK_ALL=()=>L(gx("Випила все","Випив все","Прийнято все"),"All taken");
 function greet(){const n=(prof().name||"").trim();if(!n)return "";const h=new Date().getHours();
-  const w=h<5?"Доброї ночі":h<12?"Доброго ранку":h<18?"Доброго дня":"Доброго вечора";return `${w}, ${esc(n)}!`}
-function openProfile(first){
-  const p=prof();
-  const v=openSheet(`<h3>${first?"Вітаю! 🌸":"Профіль"}</h3>
-  ${first?`<p class="sub" style="margin-top:-4px">Розкажіть трохи про себе — так додаток звертатиметься до вас правильно.</p>`:""}
+  const w=h<5?L("Доброї ночі","Good night"):h<12?L("Доброго ранку","Good morning"):h<18?L("Доброго дня","Good afternoon"):L("Доброго вечора","Good evening");return `${w}, ${esc(n)}!`}
+function openProfile(first,draft){
+  const p={...prof(),...(draft||{})};
+  const radios=(name,opts,val)=>opts.map(([k,l])=>`<label class="fbtn daychk"><input type="radio" name="${name}" value="${k}" ${(val||"")===k?"checked":""}>${l}</label>`).join("");
+  const v=openSheet(`<h3>${first?L("Вітаю! 🌸","Welcome! 👋"):L("Налаштування","Settings")}</h3>
+  ${first?`<p class="sub" style="margin-top:-4px">${L("Кілька налаштувань — і можна починати.","A couple of settings and you're ready.")}</p>`:""}
   <form id="pf">
-    <label class="f"><span>Як вас звати</span><input class="inp" name="name" value="${esc(p.name||"")}" placeholder="напр. Анна" autocomplete="given-name"></label>
-    <label class="f"><span>Стать</span><div class="row" style="flex-wrap:wrap;gap:6px">
-      ${[["f","Жіноча"],["m","Чоловіча"],["n","Не вказувати"]].map(([k,l])=>`<label class="fbtn daychk"><input type="radio" name="gender" value="${k}" ${(p.gender||"")===k?"checked":""}>${l}</label>`).join("")}
-    </div></label>
-    <p class="hint" style="margin:-6px 2px 16px">Від цього залежать написи: «Випила», «Випив» або нейтральне «Прийнято».</p>
-    <div class="actions">${first?`<button type="button" class="btn ghost" style="flex:1" id="pskip">Пропустити</button>`:`<button type="button" class="btn ghost" style="flex:1" data-close2>Скасувати</button>`}<button class="btn">Зберегти</button></div>
+    <label class="f"><span>${L("Мова","Language")}</span><div class="row" style="flex-wrap:wrap;gap:6px">${radios("lang",[["uk","Українська"],["en","English"]],lang())}</div></label>
+    <label class="f"><span>${L("Тема","Theme")}</span><div class="row" style="flex-wrap:wrap;gap:6px">${radios("theme",[["folk",L("Українська 🌸","Ukrainian folk 🌸")],["modern",L("Сучасна","Modern")]],theme())}</div></label>
+    <label class="f"><span>${L("Як вас звати","Your name")}</span><input class="inp" name="name" value="${esc(p.name||"")}" placeholder="${L("напр. Анна","e.g. Anna")}" autocomplete="given-name"></label>
+    ${lang()==="uk"?`<label class="f"><span>Стать</span><div class="row" style="flex-wrap:wrap;gap:6px">${radios("gender",[["f","Жіноча"],["m","Чоловіча"],["n","Не вказувати"]],p.gender)}</div></label>
+    <p class="hint" style="margin:-6px 2px 16px">Від цього залежать написи: «Випила», «Випив» або нейтральне «Прийнято».</p>`:`<input type="hidden" name="gender" value="${esc(p.gender||"n")}">`}
+    <div class="actions">${first?`<button type="button" class="btn ghost" style="flex:1" id="pskip">${L("Пропустити","Skip")}</button>`:`<button type="button" class="btn ghost" style="flex:1" data-close2>${L("Скасувати","Cancel")}</button>`}<button class="btn">${L("Зберегти","Save")}</button></div>
   </form>`);
+  const form=v.querySelector("#pf");
+  const keep=()=>{const f=new FormData(form);return {name:f.get("name")||"",gender:f.get("gender")||p.gender}};
+  form.querySelectorAll("[name=lang],[name=theme]").forEach(r=>r.onchange=()=>{
+    const f=new FormData(form);S.profile={...prof(),lang:f.get("lang"),theme:f.get("theme")};saveLocal();applyLook();render();openProfile(first,keep())});
   v.querySelectorAll("[data-close2]").forEach(b=>b.onclick=closeSheet);
-  const sk=v.querySelector("#pskip");if(sk)sk.onclick=()=>{S.profile={name:"",gender:"n"};saveLocal();closeSheet();render()};
-  v.querySelector("#pf").onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);
-    S.profile={name:(f.get("name")||"").trim(),gender:f.get("gender")||"n"};saveLocal();closeSheet();render();toast("Профіль збережено")};
+  const sk=v.querySelector("#pskip");if(sk)sk.onclick=()=>{S.profile={...prof(),name:"",gender:"n",lang:lang(),theme:theme()};saveLocal();closeSheet();render()};
+  form.onsubmit=e=>{e.preventDefault();const f=new FormData(form);
+    S.profile={...prof(),name:(f.get("name")||"").trim(),gender:f.get("gender")||"n",lang:f.get("lang")||lang(),theme:f.get("theme")||theme()};
+    saveLocal();applyLook();closeSheet();render();toast(L("Збережено","Saved"))};
 }
 
 /* ---------- planning ---------- */
@@ -300,6 +341,8 @@ const cdist=(a,b)=>{const d=Math.abs(a-b)%1440;return Math.min(d,1440-d)};
 const hasPlan=m=>!!(m&&m.plan&&m.plan.mode&&m.plan.mode!=="none"&&(m.plan.mode==="manual"?parseTimes(m.plan.times).length:+m.times>0));
 function apartHours(a,b){let h=0;(a.apart||[]).forEach(r=>{if(r.medId===b.id)h=Math.max(h,+r.hours||0)});(b.apart||[]).forEach(r=>{if(r.medId===a.id)h=Math.max(h,+r.hours||0)});return h}
 function parseTimes(str){return String(str||"").split(/[\s,;]+/).filter(x=>/^\d{1,2}[:.]\d{2}$/.test(x)).map(x=>hm(x.replace(".",":")))}
+const WD=()=>L("Будні","Weekdays"), WE=()=>L("Вихідні","Weekends");
+const sideTxt=(side,short)=>side==="before"?(short?L("раніше підйому","before waking"):L("раніше пробудження","before waking")):L("пізніше сну","after bedtime");
 
 const FLEXC={};
 function flexTimes(m){
@@ -352,8 +395,8 @@ function computePlan(type,override){
 let PC={};
 const planCache=t=>PC[t]||(PC[t]=computePlan(t));
 function issueText(it){const a=[];
-  if(it.out)a.push(`${fm(it.t)} — ${it.out.side==="before"?"раніше пробудження":"пізніше сну"} на ${fmtDur(it.out.min*60000)}`);
-  it.conf.forEach(q=>a.push(`${fm(it.t)} — лише ${fmtDur(q.d*60000)} від «${esc(q.m.name)}» (треба ${String(q.h).replace(".",",")} год)`));
+  if(it.out)a.push(`${fm(it.t)} — ${L("на "+fmtDur(it.out.min*60000)+" "+sideTxt(it.out.side),fmtDur(it.out.min*60000)+" "+sideTxt(it.out.side))}`);
+  it.conf.forEach(q=>a.push(`${fm(it.t)} — ${L(`лише ${fmtDur(q.d*60000)} від «${esc(q.m.name)}» (треба ${dec(q.h)} год)`,`only ${fmtDur(q.d*60000)} from “${esc(q.m.name)}” (needs ${q.h} h)`)}`));
   return a.join("<br>⚠ ")}
 function slotsAround(m){const res=[];for(let d=-1;d<=1;d++){const day=startOfDay()+d*86400000;const type=typeOf(new Date(day+43200000));(planCache(type).ctx[m.id]||[]).forEach(t=>res.push(day+t*60000))}return res.sort((a,b)=>a-b)}
 function tolOf(m){const ts=(planCache("wd").ctx[m.id]||[]).slice().sort((a,b)=>a-b);let g=360;if(ts.length>1)ts.forEach((t,i)=>{const nx=i+1<ts.length?ts[i+1]:ts[0]+1440;g=Math.min(g,nx-t)});return Math.min(180,g/2)*60000}
@@ -363,13 +406,13 @@ function courseInfo(m){const p=m.plan||{};if(!(+p.courseDays>0&&p.start))return 
   return {day,total:+p.courseDays,done:day>+p.courseDays,notStarted:day<1}}
 function previewHTML(tm){
   const md=tm.plan&&tm.plan.mode;if(!md||md==="none")return "";
-  if(md!=="manual"&&!(+tm.times>0))return `<p class="hint" style="margin:0 2px 10px">Вкажіть угорі, скільки разів на день.</p>`;
-  if(md==="manual"&&!parseTimes(tm.plan.times).length)return `<p class="hint" style="margin:0 2px 10px">Впишіть години через кому, напр. 08:00, 20:00.</p>`;
+  if(md!=="manual"&&!(+tm.times>0))return `<p class="hint" style="margin:0 2px 10px">${L("Вкажіть угорі, скільки разів на день.","Set “times per day” above.")}</p>`;
+  if(md==="manual"&&!parseTimes(tm.plan.times).length)return `<p class="hint" style="margin:0 2px 10px">${L("Впишіть години через кому, напр. 08:00, 20:00.","Type times separated by commas, e.g. 08:00, 20:00.")}</p>`;
   const rows=["wd","we"].map(type=>{const its=computePlan(type,tm).items.filter(it=>it.m.id===tm.id);
     const iss=its.map(issueText).filter(Boolean);
-    return `<div class="pv"><span class="pvl">${type==="wd"?"Будні":"Вихідні"}</span><div>${its.map(it=>`<span class="pt ${it.out||it.conf.length?"bad":""}">${fm(it.t)}</span>`).join("")}${iss.map(x=>`<div class="pvw">⚠ ${x}</div>`).join("")}</div></div>`}).join("");
+    return `<div class="pv"><span class="pvl">${type==="wd"?WD():WE()}</span><div>${its.map(it=>`<span class="pt ${it.out||it.conf.length?"bad":""}">${fm(it.t)}</span>`).join("")}${iss.map(x=>`<div class="pvw">⚠ ${x}</div>`).join("")}</div></div>`}).join("");
   let gl="";const P0=computePlan("wd",tm),c0=P0.c,ts0=(P0.ctx[tm.id]||[]).slice().sort((a,b)=>dkey(a,c0)-dkey(b,c0));
-  if(ts0.length>1)gl=`<div class="pvw" style="color:var(--muted)">Проміжки: ${ts0.map((t,i)=>fmtDur(((((i+1<ts0.length?ts0[i+1]:ts0[0])-t)%1440+1440)%1440||1440)*60000)).join(" · ")}</div>`;
+  if(ts0.length>1)gl=`<div class="pvw" style="color:var(--muted)">${L("Проміжки","Gaps")}: ${ts0.map((t,i)=>fmtDur(((((i+1<ts0.length?ts0[i+1]:ts0[0])-t)%1440+1440)%1440||1440)*60000)).join(" · ")}</div>`;
   return `<div class="preview">${rows}${gl}</div>`;
 }
 function suggestAnchors(tm){
@@ -382,39 +425,41 @@ function suggestAnchors(tm){
   all.sort((x,y)=>x.score-y.score||dkey(x.ts[0],cw)-dkey(y.ts[0],cw));
   const pick=[];for(const o of all){if(pick.every(q=>Math.min(...q.ts.map(t=>Math.min(...o.ts.map(u=>cdist(t,u)))))>=30))pick.push(o);if(pick.length===3)break}
   pick.forEach(o=>o.desc=["wd","we"].map(type=>{const c=dayCfg(type);
-    const iss=o.ts.map(t=>({t,o:outInfo(t,c)})).filter(x=>x.o).map(x=>`${fm(x.t)} — ${x.o.side==="before"?"раніше підйому":"пізніше сну"} на ${fmtDur(x.o.min*60000)}`);
-    return `<b style="display:inline;font-size:13px">${type==="wd"?"Будні":"Вихідні"}:</b> ${iss.length?iss.join(", "):"усе в межах дня ✓"}`}).join("<br>"));
+    const iss=o.ts.map(t=>({t,o:outInfo(t,c)})).filter(x=>x.o).map(x=>`${fm(x.t)} — ${L("на "+fmtDur(x.o.min*60000)+" "+sideTxt(x.o.side,1),fmtDur(x.o.min*60000)+" "+sideTxt(x.o.side,1))}`);
+    return `<b style="display:inline;font-size:13px">${type==="wd"?WD():WE()}:</b> ${iss.length?iss.join(", "):L("усе в межах дня ✓","all within your day ✓")}`}).join("<br>"));
   return pick;
 }
 
 /* ---------- render ---------- */
 let tab="today", histFilter="all", pendingDelete=null;
+const TABS=()=>({today:L("Сьогодні","Today"),plan:L("План","Plan"),history:L("Історія","History"),meds:L("Мої ліки","My meds")});
 function render(){
   PC={};
-  $("#today").textContent=new Date().toLocaleDateString("uk-UA",{weekday:"short",day:"numeric",month:"long"});
-  $("#title").textContent={today:"Сьогодні",plan:"План",history:"Історія",meds:"Мої ліки"}[tab];
-  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
-  $("#main").innerHTML= backend===null? `<div class="empty">Завантаження…</div>` :
+  $("#flw").innerHTML=logo(44);
+  $("#today").textContent=new Date().toLocaleDateString(LOC(),{weekday:"short",day:"numeric",month:"long"});
+  $("#title").textContent=TABS()[tab];
+  document.querySelectorAll("nav button").forEach(b=>{b.classList.toggle("on",b.dataset.tab===tab);b.querySelector(".lbl").textContent=TABS()[b.dataset.tab]});
+  $("#main").innerHTML= backend===null? `<div class="empty">${L("Завантаження…","Loading…")}</div>` :
     tab==="today"?renderToday(): tab==="plan"?renderPlan(): tab==="history"?renderHistory(): renderMeds();
 }
 
 function renderToday(){
   const meds=medsList();const gr=greet();const pre=gr?`<p class="greet">${gr}</p>`:"";
-  if(!meds.length) return pre+`<div class="empty"><div class="big">${flower(96)}</div>Тут з'являться ваші ліки.<br><br>
-    <button class="btn" style="flex:none" onclick="openMedForm()">Додати перші ліки</button></div>`;
+  if(!meds.length) return pre+`<div class="empty"><div class="big">${logo(96)}</div>${L("Тут з'являться ваші ліки.","Your medications will appear here.")}<br><br>
+    <button class="btn" style="flex:none" onclick="openMedForm()">${L("Додати перші ліки","Add your first medication")}</button></div>`;
   let h=pre;
   const combos=Object.values(S.combos);
   if(combos.length){
-    h+=`<h2>Комбінації</h2>`;
+    h+=`<h2>${L("Комбінації","Combos")}</h2>`;
     combos.forEach(c=>{
       const ms=c.medIds.map(id=>S.meds[id]).filter(Boolean);
       h+=`<div class="card combo"><div style="flex:1;min-width:0"><div class="name">${esc(c.name)}</div>
         <div class="chips">${ms.map(m=>`<span class="chip" style="--c:${m.color}">${esc(m.name)}</span>`).join("")}</div></div>
         <div class="actions" style="flex-direction:column">
           <button class="btn small" onclick="takeCombo('${c.id}')">${TOOK_ALL()}</button>
-          <button class="link" onclick="openTimeSheet('combo','${c.id}')">інший час</button></div></div>`;
+          <button class="link" onclick="openTimeSheet('combo','${c.id}')">${L("інший час","other time")}</button></div></div>`;
     });
-    h+=`<h2>Ліки</h2>`;
+    h+=`<h2>${L("Ліки","Medications")}</h2>`;
   }
   meds.forEach(m=>{
     const st=medStatus(m);
@@ -425,44 +470,44 @@ function renderToday(){
     if(hasPlan(m)){
       const ns=nextSlot(m);
       if(ns){const tmr=ns.ts>=startOfDay()+86400000;
-        nextLine=ns.due?`<span class="tag due">Час приймати · за планом ${fmtTime(ns.ts)}</span>`
-          :`За планом ${tmr?"завтра ":""}о <b>${fmtTime(ns.ts)}</b> <span class="sub">(через ${fmtDur(ns.ts-st.now)})</span>`}
+        nextLine=ns.due?`<span class="tag due">${L("Час приймати · за планом","Time to take · planned")} ${fmtTime(ns.ts)}</span>`
+          :`${L("За планом "+(tmr?"завтра ":"")+"о","Planned "+(tmr?"tomorrow ":"")+"at")} <b>${fmtTime(ns.ts)}</b> <span class="sub">(${L("через","in")} ${fmtDur(ns.ts-st.now)})</span>`}
     }
-    else if(!st.last) nextLine=`<span class="sub">Ще не приймали</span>`;
+    else if(!st.last) nextLine=`<span class="sub">${L("Ще не приймали","Not taken yet")}</span>`;
     else if(st.next){
       const diff=st.next-st.now;
       if(times>0 && st.today>=times && diff>0 && new Date(st.next).getDate()!==new Date().getDate())
-        nextLine=`<span class="tag ok">✓ На сьогодні все</span>`;
-      else if(diff<=0) nextLine=`<span class="tag due">Час приймати · з ${fmtTime(st.next)}</span>`;
-      else nextLine=`Наступна о <b>${fmtTime(st.next)}</b> <span class="sub">(через ${fmtDur(diff)})</span>`;
+        nextLine=`<span class="tag ok">✓ ${L("На сьогодні все","Done for today")}</span>`;
+      else if(diff<=0) nextLine=`<span class="tag due">${L("Час приймати · з","Time to take · since")} ${fmtTime(st.next)}</span>`;
+      else nextLine=`${L("Наступна о","Next at")} <b>${fmtTime(st.next)}</b> <span class="sub">(${L("через","in")} ${fmtDur(diff)})</span>`;
     }
     let extra="";
     medsList().forEach(o=>{if(o.id===m.id)return;const h=apartHours(m,o);if(!h)return;const lo=dosesOf(o.id)[0];
-      if(lo&&st.now>=lo.at&&st.now-lo.at<h*HOUR)extra+=`<div><span class="tag warn">«${esc(o.name)}» о ${fmtTime(lo.at)} — краще після ${fmtTime(lo.at+h*HOUR)}</span></div>`});
+      if(lo&&st.now>=lo.at&&st.now-lo.at<h*HOUR)extra+=`<div><span class="tag warn">${L(`«${esc(o.name)}» о ${fmtTime(lo.at)} — краще після ${fmtTime(lo.at+h*HOUR)}`,`“${esc(o.name)}” at ${fmtTime(lo.at)} — better after ${fmtTime(lo.at+h*HOUR)}`)}</span></div>`});
     const ci=courseInfo(m);
-    if(ci)extra+=ci.done?`<div><span class="tag ok">✓ Курс завершено (${ci.total} дн)</span></div>`
-      :ci.notStarted?`<div class="sub">Курс почнеться ${new Date(m.plan.start+"T12:00").toLocaleDateString("uk-UA",{day:"numeric",month:"long"})}</div>`
-      :`<div>Курс: <b>день ${ci.day} з ${ci.total}</b></div>`;
+    if(ci)extra+=ci.done?`<div><span class="tag ok">✓ ${L(`Курс завершено (${ci.total} дн)`,`Course complete (${ci.total} days)`)}</span></div>`
+      :ci.notStarted?`<div class="sub">${L("Курс почнеться","Course starts")} ${new Date(m.plan.start+"T12:00").toLocaleDateString(LOC(),{day:"numeric",month:"long"})}</div>`
+      :`<div>${L("Курс","Course")}: <b>${L(`день ${ci.day} з ${ci.total}`,`day ${ci.day} of ${ci.total}`)}</b></div>`;
     const need=ci&&!ci.done&&+m.times?Math.max(0,((ci.total-Math.max(ci.day,1)+1)*m.times-(ci.notStarted?0:st.today))*(+m.perDose||1)):null;
     let stock="";
     if(m.stock!==""&&m.stock!=null){
       const low=(+m.stock<(+m.perDose||1))||(st.daysLeft!=null&&st.daysLeft<=5);
-      stock=`<div>${low?'<span class="tag warn">':''}Залишилось ${pieces(m.stock)}${st.daysLeft!=null?` · ≈ ${Math.floor(st.daysLeft)} дн`:''}${low?'</span>':''}</div>`;
-      if(need!=null&&+m.stock<need)stock+=`<div><span class="tag warn">До кінця курсу треба ще ${pieces(need)} — не вистачить</span></div>`;
+      stock=`<div>${low?'<span class="tag warn">':''}${L("Залишилось","Left")}: ${pieces(m.stock)}${st.daysLeft!=null?` · ≈ ${Math.floor(st.daysLeft)} ${L("дн","days")}`:''}${low?'</span>':''}</div>`;
+      if(need!=null&&+m.stock<need)stock+=`<div><span class="tag warn">${L(`До кінця курсу треба ще ${pieces(need)} — не вистачить`,`Course needs ${pieces(need)} more — not enough`)}</span></div>`;
     }
     h+=`<div class="card med" style="--c:${m.color}">
       <div class="row between"><div><div class="name">${esc(m.name)}</div>
-        <div class="sub">${esc([m.dose, times?`${times} р/день`:"за потреби"].filter(Boolean).join(" · "))}</div></div>
-        ${times?`<div style="text-align:right"><div class="dots">${dots}</div><div class="count" style="margin-top:4px">${st.today} з ${times}</div></div>`:`<div class="count">сьогодні: ${st.today}</div>`}
+        <div class="sub">${esc([m.dose, times?`${times} ${L("р/день","×/day")}`:L("за потреби","as needed")].filter(Boolean).join(" · "))}</div></div>
+        ${times?`<div style="text-align:right"><div class="dots">${dots}</div><div class="count" style="margin-top:4px">${st.today} ${L("з","of")} ${times}</div></div>`:`<div class="count">${L("сьогодні","today")}: ${st.today}</div>`}
       </div>
       <div class="lines">
-        ${st.last?`<div>Остання: <b>${fmtTime(st.last.at)}</b>${st.last.at<startOfDay()?` <span class="sub">(${fmtDay(st.last.at).toLowerCase()})</span>`:""} <span class="sub">· ${fmtDur(st.now-st.last.at)} тому</span></div>`:""}
+        ${st.last?`<div>${L("Остання","Last")}: <b>${fmtTime(st.last.at)}</b>${st.last.at<startOfDay()?` <span class="sub">(${fmtDay(st.last.at).toLowerCase()})</span>`:""} <span class="sub">· ${L(fmtDur(st.now-st.last.at)+" тому",fmtDur(st.now-st.last.at)+" ago")}</span></div>`:""}
         <div>${nextLine}</div>
         ${extra}${stock}
       </div>
       <div class="actions">
         <button class="btn" id="take_${m.id}" onclick="takeMed('${m.id}')">✓ ${TOOK()}</button>
-        <button class="btn ghost" onclick="openTimeSheet('med','${m.id}')" aria-label="Вказати інший час">🕒</button>
+        <button class="btn ghost" onclick="openTimeSheet('med','${m.id}')" aria-label="${L("Вказати інший час","Pick another time")}">🕒</button>
       </div></div>`;
   });
   return h;
@@ -472,34 +517,33 @@ function renderHistory(){
   const meds=medsList();
   let doses=Object.values(S.doses).sort((a,b)=>b.at-a.at);
   if(histFilter!=="all") doses=doses.filter(d=>d.medId===histFilter);
-  let h=`<div class="filter"><button class="fbtn ${histFilter==="all"?"on":""}" onclick="setFilter('all')">Усі</button>
+  let h=`<div class="filter"><button class="fbtn ${histFilter==="all"?"on":""}" onclick="setFilter('all')">${L("Усі","All")}</button>
     ${meds.map(m=>`<button class="fbtn ${histFilter===m.id?"on":""}" onclick="setFilter('${m.id}')">${esc(m.name)}</button>`).join("")}</div>`;
   if(histFilter!=="all"){
     const m=S.meds[histFilter], ds=doses;
     const gaps=[]; for(let i=0;i<ds.length-1;i++) gaps.push(ds[i].at-ds[i+1].at);
     const avg=gaps.length? gaps.reduce((a,b)=>a+b,0)/gaps.length:null;
     const week=ds.filter(d=>d.at>=Date.now()-7*24*HOUR).length;
-    h+=`<div class="stats"><div class="stat"><b>${week}</b><span>за 7 днів</span></div>
-      <div class="stat"><b>${avg?fmtDur(avg):"—"}</b><span>сер. інтервал</span></div>
-      <div class="stat"><b>${m&&m.times?interval(m).toString().replace(".",",")+" год":"—"}</b><span>за схемою</span></div></div>`;
+    h+=`<div class="stats"><div class="stat"><b>${week}</b><span>${L("за 7 днів","last 7 days")}</span></div>
+      <div class="stat"><b>${avg?fmtDur(avg):"—"}</b><span>${L("сер. інтервал","avg. interval")}</span></div>
+      <div class="stat"><b>${m&&m.times?dec(interval(m))+L(" год"," h"):"—"}</b><span>${L("за схемою","scheduled")}</span></div></div>`;
   }
-  if(!doses.length) return h+`<div class="empty"><div class="big">${flower(80)}</div>Поки що порожньо.<br>Записи з'являться після першої відмітки «${TOOK()}».</div>`;
-  // previous dose of same med for intervals
+  if(!doses.length) return h+`<div class="empty"><div class="big">${logo(80)}</div>${L("Поки що порожньо.","Nothing here yet.")}<br>${L(`Записи з'являться після першої відмітки «${TOOK()}».`,"Entries appear after you first tap “Taken”.")}</div>`;
   const all=Object.values(S.doses).sort((a,b)=>a.at-b.at), prev={}, lastSeen={};
   all.forEach(d=>{prev[d.id]=lastSeen[d.medId]; lastSeen[d.medId]=d});
   const groups={};
   doses.forEach(d=>{const k=startOfDay(d.at);(groups[k]=groups[k]||[]).push(d)});
   Object.keys(groups).sort((a,b)=>b-a).forEach(k=>{
     const list=groups[k];
-    h+=`<div class="day"><div class="dayhead"><b>${fmtDay(+k)}</b><span class="sub">${list.length} ${plural(list.length,"прийом","прийоми","прийомів")}</span></div><div class="timeline">`;
+    h+=`<div class="day"><div class="dayhead"><b>${fmtDay(+k)}</b><span class="sub">${list.length} ${pl(list.length,["прийом","прийоми","прийомів"],["dose","doses"])}</span></div><div class="timeline">`;
     list.forEach(d=>{
-      const m=S.meds[d.medId]; const color=m?m.color:(d.color||"#999"); const name=m?m.name:(d.medName+" (видалено)");
+      const m=S.meds[d.medId]; const color=m?m.color:(d.color||"#999"); const name=m?m.name:(d.medName+L(" (видалено)"," (deleted)"));
       const p=prev[d.id];
-      const gap=p?`+${fmtDur(d.at-p.at)} після попередньої`:"перший запис";
+      const gap=p?L(`+${fmtDur(d.at-p.at)} після попередньої`,`+${fmtDur(d.at-p.at)} since previous`):L("перший запис","first entry");
       const combo=d.comboId&&S.combos[d.comboId]?` · ${esc(S.combos[d.comboId].name)}`:"";
       h+=`<div class="ev" style="--c:${color}"><span class="t">${fmtTime(d.at)}</span><span class="d"></span>
         <div><div style="font-weight:700">${esc(name)}${d.amount&&d.amount!=1?` <span class="sub">×${d.amount}</span>`:""}</div><div class="gap">${gap}${combo}${d.note?` · ${esc(d.note)}`:""}</div></div>
-        <button class="x ${pendingDelete===d.id?"confirm":""}" onclick="askDelete('${d.id}')">${pendingDelete===d.id?"Видалити?":"×"}</button></div>`;
+        <button class="x ${pendingDelete===d.id?"confirm":""}" onclick="askDelete('${d.id}')">${pendingDelete===d.id?L("Видалити?","Delete?"):"×"}</button></div>`;
     });
     h+=`</div></div>`;
   });
@@ -509,39 +553,39 @@ function renderHistory(){
 function renderMeds(){
   const meds=medsList(); const combos=Object.values(S.combos);
   const pp=prof();
-  let h=`<div class="card row between" style="padding:12px 16px"><div><div class="sub" style="font-size:13px">Профіль</div><b>👤 ${esc(pp.name||"Без імені")}</b> <span class="sub">· ${({f:"жіноча",m:"чоловіча"})[pp.gender]||"стать не вказана"}</span></div><button class="btn small ghost" onclick="openProfile()">Змінити</button></div>
-  <button class="btn" style="width:100%" onclick="openMedForm()">+ Додати ліки</button>`;
+  const gtxt=lang()==="uk"?` <span class="sub">· ${({f:"жіноча",m:"чоловіча"})[pp.gender]||"стать не вказана"}</span>`:"";
+  let h=`<div class="card row between" style="padding:12px 16px"><div><div class="sub" style="font-size:13px">${L("Налаштування","Settings")} · ${lang()==="en"?"English":"Українська"} · ${theme()==="modern"?L("сучасна тема","modern theme"):L("українська тема","folk theme")}</div><b>👤 ${esc(pp.name||L("Без імені","No name"))}</b>${gtxt}</div><button class="btn small ghost" onclick="openProfile()">${L("Змінити","Edit")}</button></div>
+  <button class="btn" style="width:100%" onclick="openMedForm()">+ ${L("Додати ліки","Add medication")}</button>`;
   if(meds.length){
-    h+=`<h2>Ліки</h2>`;
+    h+=`<h2>${L("Ліки","Medications")}</h2>`;
     meds.forEach(m=>{
       h+=`<div class="card med" style="--c:${m.color}"><div class="row between"><div>
         <div class="name">${esc(m.name)}</div>
-        <div class="sub">${esc([m.dose, m.times?`${m.times} р/день · кожні ${String(interval(m)).replace(".",",")} год`:"за потреби", m.stock!==""&&m.stock!=null?`запас ${pieces(m.stock)}`:""].filter(Boolean).join(" · "))}</div>
+        <div class="sub">${esc([m.dose, m.times?L(`${m.times} р/день · кожні ${dec(interval(m))} год`,`${m.times}×/day · every ${interval(m)} h`):L("за потреби","as needed"), m.stock!==""&&m.stock!=null?`${L("запас","stock")} ${pieces(m.stock)}`:""].filter(Boolean).join(" · "))}</div>
         ${hasPlan(m)?`<div class="sub" style="margin-top:4px">🗓 ${(()=>{const P=planCache("wd");return (P.ctx[m.id]||[]).slice().sort((a,b)=>dkey(a,P.c)-dkey(b,P.c)).map(fm).join(" · ")})()}</div>`:""}
         ${m.notes?`<div class="sub" style="margin-top:4px">📝 ${esc(m.notes)}</div>`:""}</div>
-        <div class="row" style="gap:4px"><button class="btn small ghost" onclick="openRefill('${m.id}')">＋📦</button>
-        <button class="btn small ghost" onclick="openMedForm('${m.id}')">Змінити</button></div></div></div>`;
+        <div class="row" style="gap:4px"><button class="btn small ghost" onclick="openRefill('${m.id}')" aria-label="${L("Поповнити запас","Refill")}">＋📦</button>
+        <button class="btn small ghost" onclick="openMedForm('${m.id}')">${L("Змінити","Edit")}</button></div></div></div>`;
     });
-    h+=`<h2>Комбінації</h2><p class="sub" style="margin:-4px 4px 10px">Набір ліків, які п'єте разом — одна кнопка відмічає всі.</p>`;
+    h+=`<h2>${L("Комбінації","Combos")}</h2><p class="sub" style="margin:-4px 4px 10px">${L("Набір ліків, які п'єте разом — одна кнопка відмічає всі.","A set of meds you take together — one tap logs them all.")}</p>`;
     combos.forEach(c=>{
       const ms=c.medIds.map(id=>S.meds[id]).filter(Boolean);
       h+=`<div class="card"><div class="row between"><div><div class="name">${esc(c.name)}</div>
         <div class="chips" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">${ms.map(m=>`<span class="chip" style="--c:${m.color}">${esc(m.name)}</span>`).join("")}</div></div>
-        <button class="btn small ghost" onclick="openComboForm('${c.id}')">Змінити</button></div></div>`;
+        <button class="btn small ghost" onclick="openComboForm('${c.id}')">${L("Змінити","Edit")}</button></div></div>`;
     });
-    if(meds.length>1) h+=`<button class="btn ghost" style="width:100%" onclick="openComboForm()">+ Нова комбінація</button>`;
-    else h+=`<p class="sub" style="margin:0 4px">Додайте хоча б двоє ліків, щоб створити комбінацію.</p>`;
+    if(meds.length>1) h+=`<button class="btn ghost" style="width:100%" onclick="openComboForm()">+ ${L("Нова комбінація","New combo")}</button>`;
+    else h+=`<p class="sub" style="margin:0 4px">${L("Додайте хоча б двоє ліків, щоб створити комбінацію.","Add at least two medications to create a combo.")}</p>`;
   }
   let lb=0; try{lb=+(localStorage.getItem(BK)||0)}catch(e){}
   const stale=Object.keys(S.doses).length&&(!lb||Date.now()-lb>14*24*HOUR);
-  h+=`<h2>Резервна копія</h2><div class="card">
-    <div class="row between"><b>${lb?`Остання: ${fmtDay(lb).toLowerCase()}, ${fmtTime(lb)}`:"Копій ще не було"}</b>${stale?'<span class="tag warn">Час зберегти</span>':''}</div>
-    <p class="sub" style="margin:8px 0 14px">Дані зберігаються лише на цьому телефоні. Час від часу зберігайте копію (у «Файли», iCloud, на пошту), щоб не втратити історію.</p>
-    <div class="actions"><button class="btn" onclick="saveBackup()">Зберегти копію</button><button class="btn ghost" onclick="openRestore()">Відновити</button></div></div>`;
-  h+=`<div class="foot">${flower(56)}</div><div class="notice" style="margin-top:10px">Версія ${APP_VERSION}<br><br>Додаток лише записує, що і коли ви прийняли. Про сумісність ліків і дозування питайте лікаря або фармацевта.</div>`;
+  h+=`<h2>${L("Резервна копія","Backup")}</h2><div class="card">
+    <div class="row between"><b>${lb?`${L("Остання","Last")}: ${fmtDay(lb).toLowerCase()}, ${fmtTime(lb)}`:L("Копій ще не було","No backups yet")}</b>${stale?`<span class="tag warn">${L("Час зберегти","Time to back up")}</span>`:''}</div>
+    <p class="sub" style="margin:8px 0 14px">${L("Дані зберігаються лише на цьому телефоні. Час від часу зберігайте копію (у «Файли», iCloud, на пошту), щоб не втратити історію.","Data is stored only on this phone. Save a backup now and then (to Files, iCloud or email) so you don't lose your history.")}</p>
+    <div class="actions"><button class="btn" onclick="saveBackup()">${L("Зберегти копію","Save backup")}</button><button class="btn ghost" onclick="openRestore()">${L("Відновити","Restore")}</button></div></div>`;
+  h+=`<div class="foot">${logo(56)}</div><div class="notice" style="margin-top:10px">${L("Версія","Version")} ${APP_VERSION}<br><br>${L("Додаток лише записує, що і коли ви прийняли. Про сумісність ліків і дозування питайте лікаря або фармацевта.","This app only records what you took and when. Ask your doctor or pharmacist about dosing and how medications combine.")}</div>`;
   return h;
 }
-const plural=(n,a,b,c)=>{const m10=n%10,m100=n%100;return m10===1&&m100!==11?a:(m10>=2&&m10<=4&&(m100<12||m100>14)?b:c)};
 
 /* ---------- actions ---------- */
 function logDose(medId,at,extra={}){
@@ -554,19 +598,19 @@ function logDose(medId,at,extra={}){
 }
 function takeMed(id,at=Date.now(),note=""){
   const d=logDose(id,at,note?{note}:{});
-  const b=document.getElementById("take_"+id); if(b){b.classList.add("done");b.textContent="✓ Записано"}
+  const b=document.getElementById("take_"+id); if(b){b.classList.add("done");b.textContent="✓ "+L("Записано","Logged")}
   toast(`${esc(S.meds[id].name)} — ${fmtTime(at)}`,()=>undoDoses([d.id]));
 }
 function takeCombo(cid,at=Date.now(),note=""){
   const c=S.combos[cid]; if(!c) return;
   const ids=c.medIds.filter(id=>S.meds[id]).map(id=>logDose(id,at,{comboId:cid,...(note?{note}:{})}).id);
-  toast(`${esc(c.name)}: ${ids.length} ${plural(ids.length,"препарат","препарати","препаратів")} о ${fmtTime(at)}`,()=>undoDoses(ids));
+  toast(`${esc(c.name)}: ${ids.length} ${pl(ids.length,["препарат","препарати","препаратів"],["medication","medications"])} ${L("о","at")} ${fmtTime(at)}`,()=>undoDoses(ids));
 }
 function undoDoses(ids){
   ids.forEach(id=>{const d=S.doses[id]; if(!d) return; const m=S.meds[d.medId];
     if(m&&m.stock!==""&&m.stock!=null) put("med",{...m,stock:+(+m.stock+(+d.amount||1)).toFixed(2)});
     del("dose",id)});
-  toast("Скасовано");
+  toast(L("Скасовано","Undone"));
 }
 function askDelete(id){
   if(pendingDelete===id){pendingDelete=null; undoDoses([id]); return}
@@ -579,7 +623,7 @@ function openSheet(html){
   closeSheet();
   const v=document.createElement("div"); v.className="veil"; v.id="veil";
   let title="";html=html.replace(/^\s*<h3>([\s\S]*?)<\/h3>/,(_,t)=>{title=t;return ""});
-  v.innerHTML=`<div class="sheet"><div class="shead"><div class="grab"></div><div class="srow"><h3>${title}</h3><button type="button" class="sx" data-close aria-label="Закрити">✕</button></div></div>${html}</div>`;
+  v.innerHTML=`<div class="sheet"><div class="shead"><div class="grab"></div><div class="srow"><h3>${title}</h3><button type="button" class="sx" data-close aria-label="${L("Закрити","Close")}">✕</button></div></div>${html}</div>`;
   v.addEventListener("click",e=>{if(e.target===v)closeSheet()});
   v.querySelectorAll("[data-close]").forEach(b=>b.onclick=closeSheet);
   const sh=v.querySelector(".sheet");let y0=null,dy=0;
@@ -591,7 +635,7 @@ function openSheet(html){
 addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
 function confirmDelete(zone,text,onYes){
   const old=zone.innerHTML;
-  zone.innerHTML=`<div class="confirm"><p>${text}</p><div class="actions"><button type="button" class="btn ghost" style="flex:1" data-no>Ні, залишити</button><button type="button" class="btn delbtn" data-yes>Так, видалити</button></div></div>`;
+  zone.innerHTML=`<div class="confirm"><p>${text}</p><div class="actions"><button type="button" class="btn ghost" style="flex:1" data-no>${L("Ні, залишити","No, keep")}</button><button type="button" class="btn delbtn" data-yes>${L("Так, видалити","Yes, delete")}</button></div></div>`;
   zone.querySelector("[data-no]").onclick=()=>{zone.innerHTML=old;bindDel()};
   zone.querySelector("[data-yes]").onclick=onYes;
   zone.scrollIntoView({block:"end",behavior:"smooth"});
@@ -600,55 +644,56 @@ function confirmDelete(zone,text,onYes){
 function closeSheet(){const v=$("#veil"); if(v) v.remove()}
 
 function openMedForm(id){
-  const m=id?S.meds[id]:{name:"",dose:"",times:2,interval:"",stock:"",perDose:1,color:COLORS[medsList().length%COLORS.length],notes:""};
+  const m=id?S.meds[id]:{name:"",dose:"",times:2,interval:"",stock:"",perDose:1,color:COLORS()[medsList().length%8],notes:""};
   const p=m.plan||{mode:"none"};
   const others=medsList().filter(x=>x.id!==id);
   let rules=(m.apart||[]).filter(r=>S.meds[r.medId]).map(r=>({...r}));
-  const v=openSheet(`<h3>${id?"Змінити ліки":"Нові ліки"}</h3>
+  const pal=COLORS().includes(m.color)?COLORS():[m.color,...COLORS().slice(0,7)];
+  const v=openSheet(`<h3>${id?L("Змінити ліки","Edit medication"):L("Нові ліки","New medication")}</h3>
   <form id="mf">
-    <label class="f"><span>Назва</span><input class="inp" name="name" required value="${esc(m.name)}" placeholder="напр. Амоксицилін"></label>
-    <label class="f"><span>Доза (необов'язково)</span><input class="inp" name="dose" value="${esc(m.dose)}" placeholder="напр. 500 мг"></label>
+    <label class="f"><span>${L("Назва","Name")}</span><input class="inp" name="name" required value="${esc(m.name)}" placeholder="${L("напр. Амоксицилін","e.g. Amoxicillin")}"></label>
+    <label class="f"><span>${L("Доза (необов'язково)","Dose (optional)")}</span><input class="inp" name="dose" value="${esc(m.dose)}" placeholder="${L("напр. 500 мг","e.g. 500 mg")}"></label>
     <div class="grid2">
-      <label class="f"><span>Разів на день</span><input class="inp" name="times" type="number" min="0" max="24" inputmode="numeric" value="${esc(m.times)}"></label>
-      <label class="f"><span>Інтервал, год</span><input class="inp" name="interval" type="number" min="0" step="0.5" inputmode="decimal" value="${esc(m.interval)}" placeholder="авто"></label>
+      <label class="f"><span>${L("Разів на день","Times per day")}</span><input class="inp" name="times" type="number" min="0" max="24" inputmode="numeric" value="${esc(m.times)}"></label>
+      <label class="f"><span>${L("Інтервал, год","Interval, h")}</span><input class="inp" name="interval" type="number" min="0" step="0.5" inputmode="decimal" value="${esc(m.interval)}" placeholder="${L("авто","auto")}"></label>
     </div>
-    <p class="hint" style="margin-top:-8px;margin-bottom:14px">0 разів = «за потреби». Інтервал порожній — рахується як 24 ÷ разів на день.</p>
+    <p class="hint" style="margin-top:-8px;margin-bottom:14px">${L("0 разів = «за потреби». Інтервал порожній — рахується як 24 ÷ разів на день.","0 times = “as needed”. Empty interval = 24 ÷ times per day.")}</p>
     <div class="grid2">
-      <label class="f"><span>Скільки пігулок є</span><input class="inp" name="stock" type="number" min="0" step="0.5" inputmode="decimal" value="${esc(m.stock)}" placeholder="напр. 30"></label>
-      <label class="f"><span>Пігулок за раз</span><input class="inp" name="perDose" type="number" min="0.25" step="0.25" inputmode="decimal" value="${esc(m.perDose)}"></label>
+      <label class="f"><span>${L("Скільки пігулок є","Pills on hand")}</span><input class="inp" name="stock" type="number" min="0" step="0.5" inputmode="decimal" value="${esc(m.stock)}" placeholder="${L("напр. 30","e.g. 30")}"></label>
+      <label class="f"><span>${L("Пігулок за раз","Pills per dose")}</span><input class="inp" name="perDose" type="number" min="0.25" step="0.25" inputmode="decimal" value="${esc(m.perDose)}"></label>
     </div>
 
-    <h4 class="sec">Розклад</h4>
-    ${S.settings?"":`<p class="hint" style="margin:-4px 2px 10px">Порада: вкажіть свій розпорядок у вкладці «План» → «⏰ Розпорядок», щоб час підбирався точніше.</p>`}
-    <label class="f"><span>Як планувати прийоми</span><select class="inp" name="mode">
-      <option value="none">Без розкладу</option>
-      <option value="interval">Рівно кожні N годин</option>
-      <option value="awake">Підібрати під мій день</option>
-      <option value="manual">Свій час</option></select></label>
+    <h4 class="sec">${L("Розклад","Schedule")}</h4>
+    ${S.settings?"":`<p class="hint" style="margin:-4px 2px 10px">${L("Порада: вкажіть свій розпорядок у вкладці «План» → «⏰ Розпорядок», щоб час підбирався точніше.","Tip: set your daily routine in “Plan” → “⏰ Routine” for better suggestions.")}</p>`}
+    <label class="f"><span>${L("Як планувати прийоми","How to schedule")}</span><select class="inp" name="mode">
+      <option value="none">${L("Без розкладу","No schedule")}</option>
+      <option value="interval">${L("Рівно кожні N годин","Every N hours")}</option>
+      <option value="awake">${L("Підібрати під мій день","Fit to my day")}</option>
+      <option value="manual">${L("Свій час","Custom times")}</option></select></label>
     <div data-mode="interval">
-      <label class="f"><span>Допустиме відхилення, ± год</span><input class="inp" name="flex" type="number" min="0" max="3" step="0.5" inputmode="decimal" value="${esc(p.flex||"")}" placeholder="0 — суворо рівні інтервали"></label>
-      <p class="hint" style="margin:-8px 2px 14px">Напр. 1 — прийоми можуть зсуватися до ±1 год, щоб усі вклалися у ваш день. Тоді години підбираються автоматично.</p>
-      <label class="f" id="anchorRow"><span>Перший прийом о</span><div class="row"><input class="inp" type="time" name="anchor" value="${esc(p.anchor||"08:00")}"><button type="button" class="btn small ghost" id="sug">Підібрати</button></div></label>
+      <label class="f"><span>${L("Допустиме відхилення, ± год","Allowed deviation, ± h")}</span><input class="inp" name="flex" type="number" min="0" max="3" step="0.5" inputmode="decimal" value="${esc(p.flex||"")}" placeholder="${L("0 — суворо рівні інтервали","0 — strictly equal intervals")}"></label>
+      <p class="hint" style="margin:-8px 2px 14px">${L("Напр. 1 — прийоми можуть зсуватися до ±1 год, щоб усі вклалися у ваш день. Тоді години підбираються автоматично.","E.g. 1 — doses may shift up to ±1 h so they all fit your day. Times are then picked automatically.")}</p>
+      <label class="f" id="anchorRow"><span>${L("Перший прийом о","First dose at")}</span><div class="row"><input class="inp" type="time" name="anchor" value="${esc(p.anchor||"08:00")}"><button type="button" class="btn small ghost" id="sug">${L("Підібрати","Suggest")}</button></div></label>
       <div id="sugbox"></div></div>
-    <div data-mode="manual"><label class="f"><span>Години прийому</span><input class="inp" name="mtimes" value="${esc(p.times||"")}" placeholder="08:00, 14:00, 20:00"></label></div>
-    <div data-mode="awake"><p class="hint" style="margin:-6px 2px 12px">Прийоми розподіляться між пробудженням і сном з урахуванням правил «окремо від».</p></div>
+    <div data-mode="manual"><label class="f"><span>${L("Години прийому","Times")}</span><input class="inp" name="mtimes" value="${esc(p.times||"")}" placeholder="08:00, 14:00, 20:00"></label></div>
+    <div data-mode="awake"><p class="hint" style="margin:-6px 2px 12px">${L("Прийоми розподіляться між пробудженням і сном з урахуванням правил «окремо від».","Doses are spread between waking and bedtime, respecting “keep apart” rules.")}</p></div>
     <div id="prev"></div>
 
-    <h4 class="sec">Окремо від інших ліків</h4>
+    <h4 class="sec">${L("Окремо від інших ліків","Keep apart from")}</h4>
     <div id="apart"></div>
-    ${others.length?`<button type="button" class="link" id="addAp">+ Додати правило</button>`:`<p class="hint" style="margin:-4px 2px 0">Коли додасте інші ліки, тут можна буде вказати, наприклад, «щонайменше 2 год від антибіотика».</p>`}
+    ${others.length?`<button type="button" class="link" id="addAp">+ ${L("Додати правило","Add rule")}</button>`:`<p class="hint" style="margin:-4px 2px 0">${L("Коли додасте інші ліки, тут можна буде вказати, наприклад, «щонайменше 2 год від антибіотика».","Once you add other meds, you can set e.g. “at least 2 h from the antibiotic” here.")}</p>`}
 
-    <h4 class="sec">Курс</h4>
+    <h4 class="sec">${L("Курс","Course")}</h4>
     <div class="grid2">
-      <label class="f"><span>Скільки днів</span><input class="inp" name="courseDays" type="number" min="1" inputmode="numeric" value="${esc(p.courseDays||"")}" placeholder="без обмеження"></label>
-      <label class="f"><span>Перший день</span><input class="inp" name="start" type="date" value="${esc(p.start||"")}"></label>
+      <label class="f"><span>${L("Скільки днів","Number of days")}</span><input class="inp" name="courseDays" type="number" min="1" inputmode="numeric" value="${esc(p.courseDays||"")}" placeholder="${L("без обмеження","no limit")}"></label>
+      <label class="f"><span>${L("Перший день","First day")}</span><input class="inp" name="start" type="date" value="${esc(p.start||"")}"></label>
     </div>
 
-    <h4 class="sec">Вигляд</h4>
-    <label class="f"><span>Колір</span><div class="swatches">${COLORS.map(c=>`<button type="button" class="sw ${c===m.color?"on":""}" style="--c:${c}" data-c="${c}"></button>`).join("")}</div></label>
-    <label class="f"><span>Нотатка</span><input class="inp" name="notes" value="${esc(m.notes)}" placeholder="напр. після їжі"></label>
-    <div class="actions" style="margin-top:6px"><button type="button" class="btn ghost" style="flex:1" data-close2>Скасувати</button><button class="btn">Зберегти</button></div>
-    ${id?`<div id="delZone" class="delzone"><button type="button" class="link" style="color:var(--warn)" id="delMed">Видалити ці ліки</button></div>`:""}
+    <h4 class="sec">${L("Вигляд","Appearance")}</h4>
+    <label class="f"><span>${L("Колір","Colour")}</span><div class="swatches">${pal.map(c=>`<button type="button" class="sw ${c===m.color?"on":""}" style="--c:${c}" data-c="${c}"></button>`).join("")}</div></label>
+    <label class="f"><span>${L("Нотатка","Note")}</span><input class="inp" name="notes" value="${esc(m.notes)}" placeholder="${L("напр. після їжі","e.g. after food")}"></label>
+    <div class="actions" style="margin-top:6px"><button type="button" class="btn ghost" style="flex:1" data-close2>${L("Скасувати","Cancel")}</button><button class="btn">${L("Зберегти","Save")}</button></div>
+    ${id?`<div id="delZone" class="delzone"><button type="button" class="link" style="color:var(--warn)" id="delMed">${L("Видалити ці ліки","Delete this medication")}</button></div>`:""}
   </form>`);
   const form=v.querySelector("#mf");form.elements.mode.value=p.mode||"none";
   let color=m.color;
@@ -662,103 +707,104 @@ function openMedForm(id){
   const upd=()=>{const mode=form.elements.mode.value;
     v.querySelectorAll("[data-mode]").forEach(d=>d.style.display=d.dataset.mode===mode?"":"none");
     const fx=+form.elements.flex.value>0;v.querySelector("#anchorRow").style.display=fx?"none":"";v.querySelector("#sugbox").style.display=fx?"none":"";
-    const tm=collect();if(!tm.name)tm.name="Ці ліки";v.querySelector("#prev").innerHTML=previewHTML(tm)};
+    const tm=collect();if(!tm.name)tm.name=L("Ці ліки","This medication");v.querySelector("#prev").innerHTML=previewHTML(tm)};
   const drawRules=()=>{const box=v.querySelector("#apart");
-    box.innerHTML=rules.map((r,i)=>`<div class="aprow"><select class="inp" data-i="${i}" data-k="medId">${others.map(o=>`<option value="${o.id}" ${o.id===r.medId?"selected":""}>${esc(o.name)}</option>`).join("")}</select><span class="sub">мін.</span><input class="inp" style="width:72px" type="number" min="0.5" step="0.5" inputmode="decimal" data-i="${i}" data-k="hours" value="${esc(r.hours)}"><span class="sub">год</span><button type="button" class="x" data-del="${i}" aria-label="Прибрати">×</button></div>`).join("");
+    box.innerHTML=rules.map((r,i)=>`<div class="aprow"><select class="inp" data-i="${i}" data-k="medId">${others.map(o=>`<option value="${o.id}" ${o.id===r.medId?"selected":""}>${esc(o.name)}</option>`).join("")}</select><span class="sub">${L("мін.","min.")}</span><input class="inp" style="width:72px" type="number" min="0.5" step="0.5" inputmode="decimal" data-i="${i}" data-k="hours" value="${esc(r.hours)}"><span class="sub">${L("год","h")}</span><button type="button" class="x" data-del="${i}" aria-label="${L("Прибрати","Remove")}">×</button></div>`).join("");
     box.querySelectorAll("[data-k]").forEach(el=>{el.oninput=el.onchange=()=>{rules[+el.dataset.i][el.dataset.k]=el.value;upd()}});
     box.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{rules.splice(+b.dataset.del,1);drawRules();upd()})};
   const ab=v.querySelector("#addAp");if(ab)ab.onclick=()=>{rules.push({medId:others[0].id,hours:2});drawRules();upd()};
   form.addEventListener("input",upd);form.addEventListener("change",upd);
   v.querySelector("#sug").onclick=()=>{const tm=collect();const opts=suggestAnchors(tm);const box=v.querySelector("#sugbox");
-    if(!opts.length){box.innerHTML=`<p class="hint">Спершу вкажіть, скільки разів на день.</p>`;return}
-    box.innerHTML=`<p class="hint" style="margin:-4px 2px 8px">Найзручніші варіанти для вашого розпорядку — оберіть один:</p>`+opts.map(o=>`<button type="button" class="opt" data-a="${fm(o.ts[0])}"><b>${o.ts.map(fm).join(" · ")}</b><span>${o.desc}</span></button>`).join("");
+    if(!opts.length){box.innerHTML=`<p class="hint">${L("Спершу вкажіть, скільки разів на день.","First set times per day.")}</p>`;return}
+    box.innerHTML=`<p class="hint" style="margin:-4px 2px 8px">${L("Найзручніші варіанти для вашого розпорядку — оберіть один:","Best options for your routine — pick one:")}</p>`+opts.map(o=>`<button type="button" class="opt" data-a="${fm(o.ts[0])}"><b>${o.ts.map(fm).join(" · ")}</b><span>${o.desc}</span></button>`).join("");
     box.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{form.elements.anchor.value=b.dataset.a;box.querySelectorAll(".opt").forEach(x=>x.classList.toggle("on",x===b));upd()})};
   v.querySelectorAll(".sw").forEach(b=>b.onclick=()=>{color=b.dataset.c;v.querySelectorAll(".sw").forEach(x=>x.classList.toggle("on",x===b));upd()});
   v.querySelectorAll("[data-close2]").forEach(b=>b.onclick=closeSheet);
   const bindMedDel=()=>{const db=v.querySelector("#delMed");if(!db)return;
-    db.onclick=()=>confirmDelete(v.querySelector("#delZone"),`Видалити «${esc(m.name)}»? Записи в історії залишаться.`,()=>{
+    db.onclick=()=>confirmDelete(v.querySelector("#delZone"),L(`Видалити «${esc(m.name)}»? Записи в історії залишаться.`,`Delete “${esc(m.name)}”? History entries will be kept.`),()=>{
       Object.values(S.combos).forEach(c=>{if(c.medIds.includes(id)) put("combo",{...c,medIds:c.medIds.filter(x=>x!==id)})});
-      del("med",id);closeSheet();toast("Ліки видалено. Історія збережена.")})(bindMedDel)};
+      del("med",id);closeSheet();toast(L("Ліки видалено. Історія збережена.","Medication deleted. History kept."))})(bindMedDel)};
   bindMedDel();
   form.onsubmit=e=>{e.preventDefault();const obj=collect();if(!obj.name)return;if(!id)obj.id=uid("m");
     if(obj.plan.courseDays&&!obj.plan.start){const d=new Date();obj.plan.start=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
-    put("med",obj);closeSheet();toast(id?"Збережено":"Ліки додано")};
+    put("med",obj);closeSheet();toast(id?L("Збережено","Saved"):L("Ліки додано","Medication added"))};
   drawRules();upd();
 }
 
 function openSettings(){
-  const st=cfgS();const days=[["Пн",1],["Вт",2],["Ср",3],["Чт",4],["Пт",5],["Сб",6],["Нд",0]];
-  const v=openSheet(`<h3>Мій розпорядок</h3><p class="sub" style="margin-top:-8px">За ним додаток підбирає години прийому, коли ви не спите.</p>
+  const st=cfgS();const days=L([["Пн",1],["Вт",2],["Ср",3],["Чт",4],["Пт",5],["Сб",6],["Нд",0]],[["Mon",1],["Tue",2],["Wed",3],["Thu",4],["Fri",5],["Sat",6],["Sun",0]]);
+  const v=openSheet(`<h3>${L("Мій розпорядок","My routine")}</h3><p class="sub" style="margin-top:-8px">${L("За ним додаток підбирає години прийому, коли ви не спите.","Used to pick dose times while you're awake.")}</p>
   <form id="sf">
-    <h4 class="sec">Будні</h4>
-    <div class="grid2"><label class="f"><span>Прокидаюсь</span><input class="inp" type="time" name="wdWake" value="${st.wdWake}"></label><label class="f"><span>Лягаю спати</span><input class="inp" type="time" name="wdSleep" value="${st.wdSleep}"></label></div>
-    <h4 class="sec">Вихідні</h4>
-    <div class="grid2"><label class="f"><span>Прокидаюсь</span><input class="inp" type="time" name="weWake" value="${st.weWake}"></label><label class="f"><span>Лягаю спати</span><input class="inp" type="time" name="weSleep" value="${st.weSleep}"></label></div>
-    <label class="f"><span>Які дні вихідні</span><div class="row" style="flex-wrap:wrap;gap:6px">${days.map(([l,d])=>`<label class="fbtn daychk"><input type="checkbox" name="we" value="${d}" ${st.weekend.map(Number).includes(d)?"checked":""}>${l}</label>`).join("")}</div></label>
-    <button class="btn" style="width:100%">Зберегти</button></form>`);
+    <h4 class="sec">${WD()}</h4>
+    <div class="grid2"><label class="f"><span>${L("Прокидаюсь","Wake up")}</span><input class="inp" type="time" name="wdWake" value="${st.wdWake}"></label><label class="f"><span>${L("Лягаю спати","Bedtime")}</span><input class="inp" type="time" name="wdSleep" value="${st.wdSleep}"></label></div>
+    <h4 class="sec">${WE()}</h4>
+    <div class="grid2"><label class="f"><span>${L("Прокидаюсь","Wake up")}</span><input class="inp" type="time" name="weWake" value="${st.weWake}"></label><label class="f"><span>${L("Лягаю спати","Bedtime")}</span><input class="inp" type="time" name="weSleep" value="${st.weSleep}"></label></div>
+    <label class="f"><span>${L("Які дні вихідні","Which days are weekends")}</span><div class="row" style="flex-wrap:wrap;gap:6px">${days.map(([l,d])=>`<label class="fbtn daychk"><input type="checkbox" name="we" value="${d}" ${st.weekend.map(Number).includes(d)?"checked":""}>${l}</label>`).join("")}</div></label>
+    <button class="btn" style="width:100%">${L("Зберегти","Save")}</button></form>`);
   v.querySelector("#sf").onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);
     S.settings={wdWake:f.get("wdWake")||DEF.wdWake,wdSleep:f.get("wdSleep")||DEF.wdSleep,weWake:f.get("weWake")||DEF.weWake,weSleep:f.get("weSleep")||DEF.weSleep,weekend:f.getAll("we").map(Number)};
-    saveLocal();closeSheet();render();toast("Розпорядок збережено")};
+    saveLocal();closeSheet();render();toast(L("Розпорядок збережено","Routine saved"))};
 }
 
 let planView="today";
 function renderPlan(){
-  const tabs=[["today","Сьогодні"],["wd","Будні"],["we","Вихідні"]];
-  let h=`<div class="filter">${tabs.map(([k,l])=>`<button class="fbtn ${planView===k?"on":""}" onclick="planView='${k}';render()">${l}</button>`).join("")}<button class="fbtn" onclick="openSettings()">⏰ Розпорядок</button></div>`;
-  if(!S.settings) h+=`<div class="card" style="margin-top:14px"><div class="name" style="font-size:19px">Спершу — ваш розпорядок</div><p class="sub">Коли ви прокидаєтесь і лягаєте спати в будні та на вихідних. Тоді додаток підбере зручні години.</p><button class="btn" style="width:100%" onclick="openSettings()">Вказати розпорядок</button></div>`;
+  const tabs=[["today",L("Сьогодні","Today")],["wd",WD()],["we",WE()]];
+  let h=`<div class="filter">${tabs.map(([k,l])=>`<button class="fbtn ${planView===k?"on":""}" onclick="planView='${k}';render()">${l}</button>`).join("")}<button class="fbtn" onclick="openSettings()">⏰ ${L("Розпорядок","Routine")}</button></div>`;
+  if(!S.settings) h+=`<div class="card" style="margin-top:14px"><div class="name" style="font-size:19px">${L("Спершу — ваш розпорядок","First, your routine")}</div><p class="sub">${L("Коли ви прокидаєтесь і лягаєте спати в будні та на вихідних. Тоді додаток підбере зручні години.","When you wake up and go to bed on weekdays and weekends — then the app can suggest good times.")}</p><button class="btn" style="width:100%" onclick="openSettings()">${L("Вказати розпорядок","Set routine")}</button></div>`;
   const planned=medsList().filter(hasPlan);
-  if(!planned.length) return h+`<div class="empty"><div class="big">${flower(80)}</div>Ще немає ліків із розкладом.<br>Відкрийте «Мої ліки» → «Змінити» → розділ «Розклад».</div>`;
+  if(!planned.length) return h+`<div class="empty"><div class="big">${logo(80)}</div>${L("Ще немає ліків із розкладом.","No scheduled medications yet.")}<br>${L("Відкрийте «Мої ліки» → «Змінити» → розділ «Розклад».","Open “My meds” → “Edit” → “Schedule”.")}</div>`;
   const isToday=planView==="today", type=isToday?typeOf(new Date()):planView, P=planCache(type), c=P.c, now=Date.now();
-  h+=`<div class="dayhead"><b>${isToday?"Сьогодні":type==="we"?"Вихідний день":"Будній день"}</b><span class="sub">${type==="we"?"вихідний":"будній"} · ${fm(c.wake)}–${fm(c.sleep)}</span></div><div class="timeline" style="padding:0">`;
+  h+=`<div class="dayhead"><b>${isToday?L("Сьогодні","Today"):type==="we"?L("Вихідний день","Weekend day"):L("Будній день","Weekday")}</b><span class="sub">${type==="we"?L("вихідний","weekend"):L("будній","weekday")} · ${fm(c.wake)}–${fm(c.sleep)}</span></div><div class="timeline" style="padding:0">`;
   let woke=false,slept=false;
-  const wakeM=`<div class="mark">☀️ <b>${fm(c.wake)}</b> · прокидаюсь</div>`;
+  const wakeM=`<div class="mark">☀️ <b>${fm(c.wake)}</b> · ${L("прокидаюсь","wake up")}</div>`;
+  const sleepM=`<div class="mark">🌙 <b>${fm(c.sleep)}</b> · ${L("сон","bedtime")}</div>`;
   P.items.forEach(it=>{
     if(!woke&&it.rel>=180){woke=true;h+=wakeM}
-    if(!slept&&it.rel>180+c.len){slept=true;h+=`<div class="mark">🌙 <b>${fm(c.sleep)}</b> · сон</div>`}
+    if(!slept&&it.rel>180+c.len){slept=true;h+=sleepM}
     let status="";
     if(isToday){const ts=startOfDay()+it.t*60000,tol=tolOf(it.m);const d=dosesOf(it.m.id).find(x=>Math.abs(x.at-ts)<=tol);
-      status=d?`<span class="tag ok">✓ ${fmtTime(d.at)}</span>`:now>ts+tol?`<span class="sub">не відмічено</span>`:now>=ts-20*60000?`<button class="btn small" onclick="takeMed('${it.m.id}')">${TOOK()}</button>`:""}
+      status=d?`<span class="tag ok">✓ ${fmtTime(d.at)}</span>`:now>ts+tol?`<span class="sub">${L("не відмічено","not logged")}</span>`:now>=ts-20*60000?`<button class="btn small" onclick="takeMed('${it.m.id}')">${TOOK()}</button>`:""}
     const iss=issueText(it);
     h+=`<div class="ev" style="--c:${it.m.color}"><span class="t">${fm(it.t)}</span><span class="d"></span><div><div style="font-weight:700">${esc(it.m.name)}</div>${it.m.dose?`<div class="gap">${esc(it.m.dose)}</div>`:""}${iss?`<div class="gap" style="color:var(--warn)">⚠ ${iss}</div>`:""}</div><div>${status}</div></div>`;
   });
   if(!woke) h+=wakeM;
-  if(!slept) h+=`<div class="mark">🌙 <b>${fm(c.sleep)}</b> · сон</div>`;
-  h+=`</div><p class="hint" style="margin:12px 4px">Чи потрібні суворі інтервали саме для ваших ліків, і скільки часу між ними — уточніть у лікаря або фармацевта.</p>`;
+  if(!slept) h+=sleepM;
+  h+=`</div><p class="hint" style="margin:12px 4px">${L("Чи потрібні суворі інтервали саме для ваших ліків, і скільки часу між ними — уточніть у лікаря або фармацевта.","Whether your medications need strict intervals, and how far apart — check with your doctor or pharmacist.")}</p>`;
   return h;
 }
 
 function openRefill(id){
   const m=S.meds[id];
-  const v=openSheet(`<h3>Поповнити запас</h3><p class="sub" style="margin-top:-8px">${esc(m.name)} · зараз ${m.stock===""||m.stock==null?"не вказано":pieces(m.stock)}</p>
-  <form id="rf"><label class="f"><span>Скільки пігулок додати</span><input class="inp" name="n" type="number" min="0" step="0.5" inputmode="decimal" required autofocus placeholder="напр. 30"></label>
-  <button class="btn" style="width:100%">Додати</button></form>`);
+  const v=openSheet(`<h3>${L("Поповнити запас","Refill")}</h3><p class="sub" style="margin-top:-8px">${esc(m.name)} · ${L("зараз","now")} ${m.stock===""||m.stock==null?L("не вказано","not set"):pieces(m.stock)}</p>
+  <form id="rf"><label class="f"><span>${L("Скільки пігулок додати","How many pills to add")}</span><input class="inp" name="n" type="number" min="0" step="0.5" inputmode="decimal" required autofocus placeholder="${L("напр. 30","e.g. 30")}"></label>
+  <button class="btn" style="width:100%">${L("Додати","Add")}</button></form>`);
   v.querySelector("#rf").onsubmit=e=>{e.preventDefault();const n=+new FormData(e.target).get("n")||0;
-    put("med",{...m,stock:+((+m.stock||0)+n).toFixed(2)});closeSheet();toast(`Запас: ${pieces((+m.stock||0)+n)}`)};
+    put("med",{...m,stock:+((+m.stock||0)+n).toFixed(2)});closeSheet();toast(`${L("Запас","Stock")}: ${pieces((+m.stock||0)+n)}`)};
 }
 
 function openComboForm(id){
   const c=id?S.combos[id]:{name:"",medIds:[]};
-  const v=openSheet(`<h3>${id?"Змінити комбінацію":"Нова комбінація"}</h3>
-  <form id="cf"><label class="f"><span>Назва</span><input class="inp" name="name" required value="${esc(c.name)}" placeholder="напр. Ранок, Вечір, Після їжі"></label>
-  <label class="f"><span>Що входить</span><div class="checks">${medsList().map(m=>`<label class="check"><input type="checkbox" name="m" value="${m.id}" ${c.medIds.includes(m.id)?"checked":""}><span class="dot on" style="--c:${m.color}"></span>${esc(m.name)}</label>`).join("")}</div></label>
-  <div class="actions"><button type="button" class="btn ghost" style="flex:1" data-close2>Скасувати</button><button class="btn">Зберегти</button></div>
-  ${id?`<div id="delZone" class="delzone"><button type="button" class="link" style="color:var(--warn)" id="delC">Видалити комбінацію</button></div>`:""}</form>`);
+  const v=openSheet(`<h3>${id?L("Змінити комбінацію","Edit combo"):L("Нова комбінація","New combo")}</h3>
+  <form id="cf"><label class="f"><span>${L("Назва","Name")}</span><input class="inp" name="name" required value="${esc(c.name)}" placeholder="${L("напр. Ранок, Вечір, Після їжі","e.g. Morning, Evening, After food")}"></label>
+  <label class="f"><span>${L("Що входить","Includes")}</span><div class="checks">${medsList().map(m=>`<label class="check"><input type="checkbox" name="m" value="${m.id}" ${c.medIds.includes(m.id)?"checked":""}><span class="dot on" style="--c:${m.color}"></span>${esc(m.name)}</label>`).join("")}</div></label>
+  <div class="actions"><button type="button" class="btn ghost" style="flex:1" data-close2>${L("Скасувати","Cancel")}</button><button class="btn">${L("Зберегти","Save")}</button></div>
+  ${id?`<div id="delZone" class="delzone"><button type="button" class="link" style="color:var(--warn)" id="delC">${L("Видалити комбінацію","Delete combo")}</button></div>`:""}</form>`);
   v.querySelectorAll("[data-close2]").forEach(b=>b.onclick=closeSheet);
   const bindCDel=()=>{const dc=v.querySelector("#delC");if(!dc)return;
-    dc.onclick=()=>confirmDelete(v.querySelector("#delZone"),`Видалити комбінацію «${esc(c.name)}»? Самі ліки залишаться.`,()=>{del("combo",id);closeSheet();toast("Комбінацію видалено")})(bindCDel)};
+    dc.onclick=()=>confirmDelete(v.querySelector("#delZone"),L(`Видалити комбінацію «${esc(c.name)}»? Самі ліки залишаться.`,`Delete combo “${esc(c.name)}”? The medications stay.`),()=>{del("combo",id);closeSheet();toast(L("Комбінацію видалено","Combo deleted"))})(bindCDel)};
   bindCDel();
   v.querySelector("#cf").onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);const ids=f.getAll("m");
-    if(!ids.length){toast("Оберіть хоча б одні ліки");return}
-    put("combo",{...(id?c:{id:uid("c"),created:Date.now()}),name:f.get("name").trim(),medIds:ids});closeSheet();toast("Комбінацію збережено")};
+    if(!ids.length){toast(L("Оберіть хоча б одні ліки","Pick at least one medication"));return}
+    put("combo",{...(id?c:{id:uid("c"),created:Date.now()}),name:f.get("name").trim(),medIds:ids});closeSheet();toast(L("Комбінацію збережено","Combo saved"))};
 }
 
 function openTimeSheet(kind,id){
   const label=kind==="med"?S.meds[id].name:S.combos[id].name;
-  const v=openSheet(`<h3>Коли ${gx("прийняла","прийняв","прийнято")}?</h3><p class="sub" style="margin-top:-8px">${esc(label)}</p>
-  <form id="tf"><label class="f"><span>Дата і час</span><input class="inp" type="datetime-local" name="at" value="${toLocalInput(Date.now())}" max="${toLocalInput(Date.now()+60000)}"></label>
-  <div class="row" style="gap:8px;margin:-4px 0 14px;flex-wrap:wrap">${[15,30,60,120].map(n=>`<button type="button" class="fbtn" data-ago="${n}">${n<60?n+" хв":n/60+" год"} тому</button>`).join("")}</div>
-  <label class="f"><span>Нотатка (необов'язково)</span><input class="inp" name="note" placeholder="напр. з їжею"></label>
-  <button class="btn" style="width:100%">Записати</button></form>`);
+  const v=openSheet(`<h3>${L(`Коли ${gx("прийняла","прийняв","прийнято")}?`,"When did you take it?")}</h3><p class="sub" style="margin-top:-8px">${esc(label)}</p>
+  <form id="tf"><label class="f"><span>${L("Дата і час","Date and time")}</span><input class="inp" type="datetime-local" name="at" value="${toLocalInput(Date.now())}" max="${toLocalInput(Date.now()+60000)}"></label>
+  <div class="row" style="gap:8px;margin:-4px 0 14px;flex-wrap:wrap">${[15,30,60,120].map(n=>`<button type="button" class="fbtn" data-ago="${n}">${L((n<60?n+" хв":n/60+" год")+" тому",(n<60?n+" min":n/60+" h")+" ago")}</button>`).join("")}</div>
+  <label class="f"><span>${L("Нотатка (необов'язково)","Note (optional)")}</span><input class="inp" name="note" placeholder="${L("напр. з їжею","e.g. with food")}"></label>
+  <button class="btn" style="width:100%">${L("Записати","Log it")}</button></form>`);
   const inp=v.querySelector("[name=at]");
   v.querySelectorAll("[data-ago]").forEach(b=>b.onclick=()=>{inp.value=toLocalInput(Date.now()-b.dataset.ago*60000)});
   v.querySelector("#tf").onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);
@@ -768,35 +814,35 @@ function openTimeSheet(kind,id){
 
 /* ---------- backup ---------- */
 const BK="mylikiv1_lastbackup";
-function markBackup(){try{localStorage.setItem(BK,Date.now())}catch(e){} toast("Копію збережено"); render()}
+function markBackup(){try{localStorage.setItem(BK,Date.now())}catch(e){} toast(L("Копію збережено","Backup saved")); render()}
 async function saveBackup(){
   const txt=JSON.stringify({app:"moi-liky",v:1,savedAt:Date.now(),data:S});
   const name=`moi-liky-${new Date().toISOString().slice(0,10)}.json`;
   const file=new File([txt],name,{type:"application/json"});
-  try{ if(navigator.canShare&&navigator.canShare({files:[file]})){ await navigator.share({files:[file],title:"Мої ліки — копія"}); return markBackup() } }
+  try{ if(navigator.canShare&&navigator.canShare({files:[file]})){ await navigator.share({files:[file],title:L("Мої ліки — копія","My Meds — backup")}); return markBackup() } }
   catch(e){ if(e&&e.name==="AbortError") return }
   const a=document.createElement("a"); a.href=URL.createObjectURL(file); a.download=name;
   document.body.appendChild(a); a.click(); a.remove(); markBackup();
 }
 function restoreFrom(text){
-  let j; try{j=JSON.parse(text)}catch(e){return toast("Не вдалося прочитати копію")}
+  let j; try{j=JSON.parse(text)}catch(e){return toast(L("Не вдалося прочитати копію","Couldn't read the backup"))}
   const d=(j&&j.data)||j;
-  if(!d||typeof d.meds!=="object") return toast("Це не схоже на копію «Мої ліки»");
+  if(!d||typeof d.meds!=="object") return toast(L("Це не схоже на копію «Мої ліки»","This doesn't look like a My Meds backup"));
   S.meds=d.meds||{}; S.doses=d.doses||{}; S.combos=d.combos||{}; if(d.settings) S.settings=d.settings; if(d.profile) S.profile=d.profile;
-  saveLocal(); closeSheet(); render(); toast("Дані відновлено");
+  saveLocal(); applyLook(); closeSheet(); render(); toast(L("Дані відновлено","Data restored"));
 }
 function openRestore(){
-  const v=openSheet(`<h3>Відновити з копії</h3>
-  <p class="sub" style="margin-top:-8px">Поточні дані на цьому телефоні буде замінено даними з копії.</p>
-  <label class="f"><span>Файл копії (.json)</span><input class="inp" type="file" accept=".json,application/json,text/plain" id="rfile"></label>
-  <label class="f"><span>…або вставте скопійований текст</span><textarea class="inp" id="rtext" rows="4" placeholder="{&quot;app&quot;:&quot;moi-liky&quot; …}"></textarea></label>
-  <button class="btn" style="width:100%" id="rgo">Відновити</button>`);
+  const v=openSheet(`<h3>${L("Відновити з копії","Restore from backup")}</h3>
+  <p class="sub" style="margin-top:-8px">${L("Поточні дані на цьому телефоні буде замінено даними з копії.","Current data on this phone will be replaced with the backup.")}</p>
+  <label class="f"><span>${L("Файл копії (.json)","Backup file (.json)")}</span><input class="inp" type="file" accept=".json,application/json,text/plain" id="rfile"></label>
+  <label class="f"><span>${L("…або вставте скопійований текст","…or paste copied text")}</span><textarea class="inp" id="rtext" rows="4" placeholder="{&quot;app&quot;:&quot;moi-liky&quot; …}"></textarea></label>
+  <button class="btn" style="width:100%" id="rgo">${L("Відновити","Restore")}</button>`);
   v.querySelector("#rgo").onclick=async()=>{
     const f=v.querySelector("#rfile").files[0];
     if(f) return restoreFrom(await f.text());
     const t=v.querySelector("#rtext").value.trim();
     if(t) return restoreFrom(t);
-    toast("Оберіть файл або вставте текст");
+    toast(L("Оберіть файл або вставте текст","Choose a file or paste the text"));
   };
 }
 
@@ -805,7 +851,7 @@ let tt;
 function toast(msg,undo){
   document.querySelectorAll(".toast").forEach(t=>t.remove()); clearTimeout(tt);
   const t=document.createElement("div"); t.className="toast"; t.innerHTML=`<span>${msg}</span>`;
-  if(undo){const b=document.createElement("button");b.textContent="Скасувати";b.onclick=()=>{t.remove();undo()};t.appendChild(b)}
+  if(undo){const b=document.createElement("button");b.textContent=L("Скасувати","Undo");b.onclick=()=>{t.remove();undo()};t.appendChild(b)}
   document.body.appendChild(t); tt=setTimeout(()=>t.remove(),undo?5000:2200);
 }
 
@@ -813,7 +859,7 @@ function toast(msg,undo){
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{tab=b.dataset.tab;pendingDelete=null;closeSheet();render();scrollTo(0,0)});
 setInterval(()=>{ if(!$("#veil")) render() },30000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!$("#veil"))render()});
-$("#flw").innerHTML=flower(44); render(); initStorage();
+initStorage();
 if("serviceWorker" in navigator) addEventListener("load",()=>navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>r.update()).catch(()=>{}));
 </script>
 </body>

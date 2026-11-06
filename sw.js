@@ -1,5 +1,5 @@
 // Мої ліки — офлайн-режим. Змініть номер версії, щоб телефон підхопив оновлення.
-const CACHE = "moi-liky-v6";
+const CACHE = "moi-liky-v7";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest",
   "./icons/icon-192.png", "./icons/icon-512.png", "./icons/apple-touch-icon.png"];
 
